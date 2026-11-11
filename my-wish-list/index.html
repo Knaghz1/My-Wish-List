@@ -345,6 +345,21 @@ em{font-style:normal;font-weight:inherit}
 .p-add input:focus{border-color:var(--rose)}
 .p-note{font-size:12px;color:var(--ink-soft);padding:2px 8px 6px}
 .p-list{max-height:min(60vh,520px);overflow:auto}
+.room-preview{font-size:14px;color:var(--ink-soft);margin:-6px 0 10px;word-break:break-all}
+.room-preview b{color:var(--wine)}
+.p-mini-btn{position:absolute;top:10px;right:12px;z-index:1;border:none;background:none;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;padding:4px 6px;border-radius:8px}
+.p-mini-btn:hover{color:var(--rose-deep);background:var(--surface-2)}
+.player .p-main{padding-top:18px}
+.player.mini{width:auto;left:auto}
+.player.mini .p-main{padding:10px 12px 10px 10px;gap:10px}
+.player.mini .p-info,.player.mini .p-sub,.player.mini .p-list,.player.mini #pPrev{display:none}
+.player.mini .record{width:40px;height:40px}
+.player.mini .record::before{inset:12px}
+.player.mini .p-mini-btn{position:static;order:5;font-size:12.5px;padding:6px 8px}
+.player.mini .p-main{display:flex}
+.player.mini{display:flex;flex-direction:column;align-items:flex-end}
+.player.mini .p-video{padding:10px 10px 0}
+.player.mini .p-video iframe{width:200px;height:200px}
 .err{color:var(--danger);font-size:14px;min-height:1em}
 
 /* ---------- toast ---------- */
@@ -452,6 +467,7 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
 
 <!-- music player -->
 <div class="player" id="player">
+  <button class="p-mini-btn" id="pMini" type="button" aria-expanded="true">Thu gọn</button>
   <div class="p-video" id="pVideo"><div id="pYT"></div></div>
   <div class="p-main">
     <div class="record" aria-hidden="true"></div>
@@ -617,6 +633,7 @@ async function api(method, body) {
   } catch { const e = new Error("network"); e.code = "network"; throw e; }
   if (r.status === 401) { const e = new Error("room"); e.code = "room"; throw e; }
   if (r.status === 503) { const e = new Error("no_db"); e.code = "no_db"; throw e; }
+  if (r.status === 429) { const e = new Error("rate"); e.code = "rate"; throw e; }
   if (r.status === 404) { const e = new Error("no_api"); e.code = "no_api"; throw e; }
   if (!r.ok) { let c = "http"; try { c = (await r.json()).error || c; } catch {} const e = new Error(c); e.code = c; throw e; }
   return r.json();
@@ -710,6 +727,17 @@ function enterRoom(code, st, created) {
   else nextOnboarding();
 }
 const ROOM_WORDS = ["hoa-hong", "may-hong", "sao-bang", "trang-non", "nang-mai", "gio-thu", "bien-xanh", "mua-ha", "keo-ngot", "la-thu"];
+// lowercase, no diacritics, words joined by "-"
+function slugify(v) {
+  return String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 24).replace(/-+$/, "");
+}
+// 8 random characters (~40 bits) make a code practically impossible to guess or to pick twice
+function roomSuffix() {
+  const abc = "abcdefghjkmnpqrstuvwxyz23456789", a = new Uint32Array(8);
+  crypto.getRandomValues(a);
+  return Array.from(a, x => abc[x % abc.length]).join("");
+}
 function randomRoom() {
   const w = ROOM_WORDS[Math.floor(Math.random() * ROOM_WORDS.length)];
   return w + "-" + String(Math.floor(1000 + Math.random() * 9000));
@@ -737,14 +765,18 @@ function roomModal() {
     const lede = h("p", { class: "lede" }, "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới.");
     const err = h("div", { class: "err" });
     const actions = h("div", { class: "modal-actions" });
-    let busyRoom = false, mode = "join";
+    let busyRoom = false, mode = "join", suffix = "";
+    const preview = h("div", { class: "room-preview" });
+    const newCode = () => (slugify(inp.value) || ROOM_WORDS[0]) + "-" + suffix;
+    const updatePreview = () => preview.replaceChildren("Mã phòng sẽ là: ", h("b", null, newCode()));
+    inp.addEventListener("input", () => { if (mode === "create") updatePreview(); });
     const create = async code => {
       try { room = code; const st = await api("POST", { op: "init" }); enterRoom(code, st, true); }
       catch { err.textContent = "Không kết nối được."; }
     };
     // join mode: one "Vào" button
     const joinMode = () => {
-      mode = "join"; err.textContent = "";
+      mode = "join"; err.textContent = ""; preview.remove(); inp.placeholder = "Nhập mã phòng";
       title.textContent = "Mã phòng";
       lede.textContent = "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới.";
       corner.style.visibility = "visible";
@@ -753,10 +785,12 @@ function roomModal() {
     // create mode: suggested code is only filled in; nothing is created until "Tạo phòng" is pressed
     const createMode = () => {
       mode = "create"; err.textContent = "";
-      if (!normRoom(inp.value)) inp.value = randomRoom();
+      suffix = roomSuffix();
+      inp.value = ""; inp.placeholder = "Tên phòng, ví dụ: khang-tien";
       title.textContent = "Tạo phòng mới";
-      lede.textContent = "Đây là mã gợi ý. Sửa nếu muốn, rồi bấm Tạo phòng.";
+      lede.textContent = "Đặt tên tuỳ ý. Trang tự thêm phần đuôi ngẫu nhiên để không ai đoán được mã.";
       corner.style.visibility = "hidden";
+      field.after(preview); updatePreview();
       actions.replaceChildren(
         h("button", { class: "btn", type: "button", onclick: joinMode }, "Quay lại"),
         createBtn);
@@ -773,20 +807,19 @@ function roomModal() {
         if (st.exists === false) {
           err.textContent = "Chưa có phòng với mã này. Kiểm tra lại, hoặc bấm Tạo phòng mới.";
         } else enterRoom(code, st);
-      } catch (e) { err.textContent = e.code === "room" ? "Mã không hợp lệ." : "Không kết nối được."; }
+      } catch (e) { err.textContent = e.code === "rate" ? "Bạn thử quá nhiều lần. Đợi 10 phút rồi thử lại." : e.code === "room" ? "Mã không hợp lệ." : "Không kết nối được."; }
       busyRoom = false;
     };
     const confirmCreate = async () => {
       if (busyRoom) return;
-      const code = normRoom(inp.value);
-      if (code.length < 6) { err.textContent = "Mã phòng cần ít nhất 6 ký tự."; return; }
+      const code = newCode();
       err.textContent = ""; busyRoom = true; createBtn.disabled = true; createBtn.textContent = "Đang tạo…";
       try {
         room = code;
         const st = await api("GET");
-        if (st.exists !== false) err.textContent = "Mã này đã có phòng. Đổi mã khác, hoặc quay lại để vào phòng.";
+        if (st.exists !== false) { suffix = roomSuffix(); updatePreview(); err.textContent = "Trùng mã, đã đổi phần đuôi. Bấm Tạo phòng lần nữa."; }
         else await create(code);
-      } catch { err.textContent = "Không kết nối được."; }
+      } catch (e) { err.textContent = e.code === "rate" ? "Bạn thử quá nhiều lần. Đợi 10 phút rồi thử lại." : "Không kết nối được."; }
       busyRoom = false;
       if (createBtn.isConnected) { createBtn.disabled = false; createBtn.textContent = "Tạo phòng"; }
     };
@@ -794,7 +827,8 @@ function roomModal() {
     const createBtn = h("button", { class: "btn primary", type: "button", onclick: confirmCreate }, "Tạo phòng");
     const corner = h("button", { class: "btn small corner-btn", type: "button", onclick: createMode }, "Tạo phòng mới");
     inp.addEventListener("keydown", e => { if (e.key === "Enter") (mode === "create" ? confirmCreate : go)(); });
-    m.append(corner, title, lede, h("div", { class: "field" }, inp), err, actions);
+    const field = h("div", { class: "field" }, inp);
+    m.append(corner, title, lede, field, err, actions);
     joinMode();
   });
 }
@@ -1671,6 +1705,17 @@ $("#pPlay").addEventListener("click", e => {
 $("#pNext").addEventListener("click", e => { e.stopPropagation(); Player.step(1); });
 $("#pPrev").addEventListener("click", e => { e.stopPropagation(); Player.step(-1); });
 $("#pListBtn").addEventListener("click", () => $("#player").classList.toggle("open"));
+function setMini(on) {
+  const pl = $("#player"), b = $("#pMini");
+  pl.classList.toggle("mini", on); if (on) pl.classList.remove("open");
+  b.textContent = on ? "Mở rộng" : "Thu gọn"; b.setAttribute("aria-expanded", on ? "false" : "true");
+  // in the compact bar the button sits after the controls
+  if (on) $(".p-main").append(b); else pl.prepend(b);
+  ls.set("wl_player_mini", on ? "1" : "0");
+}
+$("#pMini").addEventListener("click", e => { e.stopPropagation(); setMini(!$("#player").classList.contains("mini")); });
+$(".record").addEventListener("click", () => { if ($("#player").classList.contains("mini")) setMini(false); });
+setMini(ls.get("wl_player_mini") === "1" || (ls.get("wl_player_mini") == null && innerWidth < 620));
 $("#vol").addEventListener("input", e => { Player.setVol(Number(e.target.value) / 100); ls.set("wl_vol", e.target.value); });
 (() => { const v = ls.get("wl_vol"); if (v != null) $("#vol").value = v; Player.setVol(Number($("#vol").value) / 100); })();
 $("#pAdd").addEventListener("submit", async e => {

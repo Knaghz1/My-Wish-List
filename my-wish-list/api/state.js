@@ -48,6 +48,18 @@ function clean(it) {
   };
 }
 const MAX_SONGS = 30;
+const MAX_MISSES = 30;   // wrong room codes per IP per 10 minutes
+const MAX_CREATES = 10;  // new rooms per IP per hour
+function clientIp(req) {
+  const f = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  return (f || req.headers["x-real-ip"] || "unknown").toString().slice(0, 64);
+}
+// counter that resets itself after `ttl` seconds
+async function bump(key, ttl) {
+  // SET ... NX EX starts the window once; INCR keeps the expiry
+  const [, n] = await pipeline([["SET", key, "0", "EX", String(ttl), "NX"], ["INCR", key]]);
+  return Number(n) || 0;
+}
 function validDate(d) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
   const t = Date.parse(d + "T00:00:00Z");
@@ -104,9 +116,14 @@ module.exports = async (req, res) => {
   const K = roomKeys(req);
   if (!K) return res.status(401).json({ error: "room" });
   try {
+    const ip = clientIp(req);
     if (req.method === "GET") {
-      const [ex, flat, cfg, ver] = await pipeline([["EXISTS", K.ver], ["HGETALL", K.items], ["GET", K.cfg], ["GET", K.ver]]);
-      return res.status(200).json(ex === 1 ? parseState(flat, cfg, ver) : { exists: false });
+      const [misses, ex, flat, cfg, ver] = await pipeline([["GET", "wl:rl:miss:" + ip], ["EXISTS", K.ver], ["HGETALL", K.items], ["GET", K.cfg], ["GET", K.ver]]);
+      // too many wrong codes from this address: stop answering for a while, so codes can't be guessed
+      if (Number(misses) >= MAX_MISSES) return res.status(429).json({ error: "rate" });
+      if (ex === 1) return res.status(200).json(parseState(flat, cfg, ver));
+      await bump("wl:rl:miss:" + ip, 600);
+      return res.status(200).json({ exists: false });
     }
     if (req.method !== "POST") return res.status(405).json({ error: "method" });
 
@@ -127,6 +144,7 @@ module.exports = async (req, res) => {
 
     if (b.op === "init") {
       if (exists) return res.status(200).json(await writeAndRead(K, []));
+      if ((await bump("wl:rl:create:" + ip, 3600)) > MAX_CREATES) return res.status(429).json({ error: "rate" });
       return res.status(200).json(await writeAndRead(K, [["SET", K.cfg, JSON.stringify({ names: ["Anh", "Em"] })]]));
     }
     if (!exists) return res.status(404).json({ error: "no_room" });
