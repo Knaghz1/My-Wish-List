@@ -1,0 +1,7 @@
+{
+  "name": "my-wish-list",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Wishlist cho hai người — tĩnh + 1 Vercel Function, dữ liệu trên Upstash Redis",
+  "engines": { "node": ">=18" }
+}

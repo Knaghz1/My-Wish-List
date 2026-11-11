@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Wish List</title>
+<link rel="preload" href="fonts/Livvic-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Livvic-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Livvic-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Livvic-Black.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var t=null;try{t=localStorage.getItem("wl_theme")}catch(e){}if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t)})();</script>
+<style>
+/* Livvic — SIL Open Font License 1.1, see fonts/OFL.txt */
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Light.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-MediumItalic.woff2") format("woff2");font-weight:500;font-style:italic;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-SemiBold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-SemiBoldItalic.woff2") format("woff2");font-weight:600;font-style:italic;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-BoldItalic.woff2") format("woff2");font-weight:700;font-style:italic;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-Black.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+@font-face{font-family:"Livvic";src:url("fonts/Livvic-BlackItalic.woff2") format("woff2");font-weight:900;font-style:italic;font-display:swap}
+:root{
+  --ink:#3d2030;
+  --ink-soft:#7a5868;
+  --wine:#6e2346;
+  --rose:#d0567f;
+  --rose-deep:#a83563;
+  --blush:#fbd9e4;
+  --line:#efc6d4;
+  --card:#fffafc;
+  --grad-main:linear-gradient(135deg,#f08aa8 0%,#d4558a 48%,#9e3570 100%);
+  --grad-hover:linear-gradient(135deg,#f497b3 0%,#dc5f93 48%,#ab3d7c 100%);
+  --grad-soft:linear-gradient(135deg,#fff3f6 0%,#fde4ec 55%,#f7e6f4 100%);
+  --grad-gift:linear-gradient(135deg,#9ccaa8 0%,#5f9a7a 100%);
+  --grad-title:linear-gradient(100deg,#7a1f4a 0%,#c94a7f 45%,#e98aa8 70%,#9e3570 100%);
+  --shadow-card:0 1px 0 rgba(255,255,255,.9) inset, 0 18px 40px -26px rgba(122,31,74,.55);
+  --f:"Livvic", system-ui, sans-serif;
+  --surface:#fff;
+  --surface-2:#fff0f5;
+  --surface-3:rgba(255,255,255,.65);
+  --field-line:#e8b6c8;
+  --sheet:rgba(255,250,252,.82);
+  --sheet-strong:rgba(255,250,252,.95);
+  --danger:#b0304f;
+  --page-bg:radial-gradient(1100px 600px at 10% -10%, #ffe9f0 0%, transparent 60%),
+    radial-gradient(900px 700px at 100% 0%, #f7d9ec 0%, transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, #f6c9d9 0%, transparent 60%),
+    linear-gradient(160deg,#fdf0f4 0%,#f9dde7 45%,#f2e2f2 100%);
+  color-scheme:light;
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#f7e8ee;
+  --ink-soft:#c7a7b5;
+  --wine:#ffc3d7;
+  --rose:#f28cad;
+  --rose-deep:#ff9fbf;
+  --blush:#4a2638;
+  --line:#4a2a3b;
+  --card:#2a1822;
+  --surface:#331d2a;
+  --surface-2:#3c2232;
+  --surface-3:rgba(51,29,42,.65);
+  --field-line:#61374d;
+  --sheet:rgba(28,16,23,.84);
+  --sheet-strong:rgba(33,19,28,.96);
+  --danger:#ff8ea8;
+  --grad-soft:linear-gradient(135deg,#351e2b 0%,#3d2131 55%,#311e36 100%);
+  --grad-title:linear-gradient(100deg,#ffd3e1 0%,#f592b3 45%,#ffbcd2 70%,#e47ca8 100%);
+  --shadow-card:0 1px 0 rgba(255,255,255,.04) inset, 0 18px 40px -24px rgba(0,0,0,.8);
+  --page-bg:radial-gradient(1100px 600px at 10% -10%, #3d1d30 0%, transparent 60%),
+    radial-gradient(900px 700px at 100% 0%, #2e1a3a 0%, transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, #40192b 0%, transparent 60%),
+    linear-gradient(160deg,#1a0f15 0%,#23121c 45%,#1b1322 100%);
+}
+:root[data-theme="dark"] .sheet{box-shadow:0 0 0 6px rgba(255,255,255,.03), 0 0 0 7px rgba(242,140,173,.18), 0 40px 80px -40px rgba(0,0,0,.9)}
+:root[data-theme="dark"] .card:hover{box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 26px 50px -24px rgba(0,0,0,.9)}
+:root[data-theme="dark"] .heart-pick button{color:#6b4256}
+:root[data-theme="dark"] .field input::placeholder,:root[data-theme="dark"] .field textarea::placeholder{color:#8f6d7c}
+body,.sheet,.card,.btn,.tab,.player,.modal,.stat,.field input,.field textarea,.field select,.select{transition:background-color .35s,border-color .35s,color .35s}
+.theme-btn .ic-sun{display:none}
+:root[data-theme="dark"] .theme-btn .ic-sun{display:block}
+:root[data-theme="dark"] .theme-btn .ic-moon{display:none}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.55;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .2  0 0 0 0 .3  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"), var(--page-bg);
+  background-attachment:fixed;
+  min-height:100vh;padding-bottom:140px;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--rose-deep)}
+
+/* ---------- frame ---------- */
+.sheet{
+  max-width:1160px;margin:28px auto 0;padding:26px 36px 40px;border-radius:22px;
+  background:var(--sheet);backdrop-filter:blur(6px);
+  border:1px solid rgba(208,86,127,.25);
+  box-shadow:0 0 0 6px rgba(255,255,255,.45), 0 0 0 7px rgba(208,86,127,.18), 0 40px 80px -50px rgba(122,31,74,.6);
+}
+@media (max-width:720px){ .sheet{margin:12px 10px 0;padding:18px 16px 30px;border-radius:16px} }
+
+/* ---------- top line ---------- */
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.topline .date{font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.topline .who{display:flex;gap:8px;align-items:center}
+
+/* ---------- masthead ---------- */
+.masthead{text-align:center;padding:26px 0 8px}
+.ornament{font-size:14px;letter-spacing:.6em;background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+.masthead h1{
+  font-weight:900;font-size:clamp(42px,7.6vw,86px);line-height:1;margin:8px 0 8px;letter-spacing:-.02em;
+  background:var(--grad-title);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.masthead h1 em{font-style:normal}
+.masthead .sub{font-size:18px;color:var(--ink-soft)}
+.masthead .sub b{font-style:normal;font-weight:700;color:var(--wine)}
+.stats{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:22px}
+.stat{text-align:left;background:var(--grad-soft);border:1px solid var(--line);border-radius:14px;padding:10px 16px;font-size:14px;color:var(--ink-soft)}
+.stat b{color:var(--wine);font-weight:700}
+.stat.right{text-align:right}
+.next{font-size:14px;color:var(--ink-soft);text-align:center;max-width:380px}
+.next b{color:var(--rose-deep)}
+@media (max-width:720px){.stats{grid-template-columns:1fr 1fr}.next{grid-column:1/-1;grid-row:1;max-width:none}.stat.right{text-align:left}}
+
+/* ---------- banner ---------- */
+.banner{margin:18px 0 0;padding:12px 16px;border-radius:12px;border:1px dashed var(--rose);background:var(--surface-2);font-size:14.5px;color:var(--wine);display:none}
+.banner.show{display:block}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:42px;padding:0 20px;border-radius:12px;cursor:pointer;white-space:nowrap;
+  font-weight:600;font-size:14.5px;letter-spacing:.01em;
+  border:1.5px solid var(--field-line);background:var(--surface);color:var(--wine);
+  transition:transform .15s, box-shadow .2s, background .2s, color .2s, border-color .2s;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--rose);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:3px solid rgba(208,86,127,.35);outline-offset:2px}
+.btn.primary{background:var(--grad-main);border-color:transparent;color:#fff;box-shadow:0 10px 20px -10px rgba(168,53,99,.75)}
+.btn.primary:hover{background:var(--grad-hover);box-shadow:0 14px 24px -10px rgba(168,53,99,.8)}
+.btn.gift{background:var(--grad-gift);border-color:transparent;color:#fff;box-shadow:0 10px 20px -10px rgba(63,120,90,.7)}
+.btn.gift:hover{filter:brightness(1.06)}
+.btn.danger{border-color:var(--field-line);color:var(--danger)}
+.btn.danger:hover{background:#b0304f;border-color:var(--danger);color:#fff}
+.btn.danger.armed{background:#b0304f;border-color:var(--danger);color:#fff}
+.btn.small{height:36px;padding:0 14px;font-size:13.5px;border-radius:10px}
+.btn.pill{border-radius:999px}
+.btn svg{width:16px;height:16px;flex:none}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.icon-btn{width:42px;padding:0}
+.who-btn b{color:var(--rose-deep)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;margin:26px 0 0;padding:6px;background:var(--grad-soft);border:1px solid var(--line);border-radius:16px;flex-wrap:wrap}
+.tab{
+  flex:1 1 180px;height:46px;border:none;border-radius:12px;cursor:pointer;background:transparent;
+  font-size:15.5px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .2s,color .2s;
+}
+.tab:hover{background:var(--surface-3);color:var(--wine)}
+.tab.active{background:var(--grad-main);color:#fff;box-shadow:0 10px 20px -12px rgba(168,53,99,.85)}
+.tab .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(208,86,127,.15);color:var(--rose-deep);border-radius:999px;padding:2px 8px}
+.tab.active .tag{background:rgba(255,255,255,.25);color:#fff}
+.tab .count{font-size:12px;background:var(--surface);color:var(--rose-deep);border-radius:999px;padding:1px 8px;font-weight:700}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:22px 0 6px}
+.toolbar .lead{color:var(--ink-soft);font-size:16px;max-width:560px}
+.toolbar .lead b{color:var(--wine)}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.select{
+  height:42px;border:1.5px solid var(--field-line);background:var(--surface);border-radius:12px;padding:0 34px 0 14px;cursor:pointer;font-weight:500;font-size:14px;color:var(--wine);
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23a83563' stroke-width='1.8' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.select:focus{outline:3px solid rgba(208,86,127,.3);outline-offset:1px}
+
+/* ---------- grid / cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;padding-top:14px}
+.card{
+  position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  padding:0 18px 16px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:8px;
+  animation:rise .5s ease both;transition:transform .2s, box-shadow .2s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 26px 50px -28px rgba(122,31,74,.6)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card::after{content:"";position:absolute;inset:7px;border:1px dashed rgba(208,86,127,.25);border-radius:13px;pointer-events:none}
+.card-top{
+  display:flex;justify-content:space-between;align-items:center;margin:0 -18px 6px;padding:11px 18px;
+  background:var(--grad-soft);border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)
+}
+.card-top .cat{background:var(--surface);border:1px solid var(--line);color:var(--rose-deep);border-radius:999px;padding:3px 10px;letter-spacing:.06em}
+.card-title{font-weight:700;font-size:20px;line-height:1.25;margin:4px 0 0;color:var(--ink);word-break:break-word}
+
+.card-meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-weight:700;font-size:19px;color:var(--wine)}
+.price .cur{color:var(--rose);margin-left:4px}
+.price.none{font-weight:400;font-size:15px;color:var(--ink-soft)}
+.hearts{color:var(--rose-deep);font-size:13px;font-weight:600;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.note{color:var(--ink-soft);margin:0;font-size:15px;word-break:break-word}
+.link{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:13.5px;text-decoration:none;color:var(--rose-deep);align-self:flex-start;border-bottom:1.5px solid rgba(208,86,127,.35);padding-bottom:1px}
+.link:hover{border-bottom-color:var(--rose-deep)}
+.status-line{font-size:14.5px;color:var(--wine);background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--rose);border-radius:10px;padding:8px 12px;margin-top:2px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:10px;position:relative;z-index:1}
+.actions .btn.primary,.actions .btn.gift{flex:1 1 auto}
+.card.has-stamp .card-top .cat{visibility:hidden}
+.stamp{
+  position:absolute;top:6px;right:14px;transform:rotate(-8deg);z-index:2;
+  font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:#fff;background:var(--grad-main);padding:6px 12px;border-radius:8px;
+  box-shadow:0 0 0 2px var(--surface), 0 0 0 3.5px var(--rose-deep), 0 8px 16px -8px rgba(122,31,74,.6);
+  pointer-events:none;
+}
+.stamp.gifted{background:var(--grad-gift);box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px #5f9a7a,0 8px 16px -8px rgba(63,120,90,.6);transform:rotate(6deg)}
+.card.is-gifted .card-title,.card.is-gifted .price{opacity:.6}
+
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;border:1.5px dashed var(--line);border-radius:18px;background:var(--surface-3)}
+.empty .big{font-size:24px;font-weight:700;margin:0 0 6px;background:var(--grad-title);-webkit-background-clip:text;background-clip:text;color:transparent}
+.empty p{margin:0 0 18px;color:var(--ink-soft)}
+
+/* ---------- picks view ---------- */
+.occasion{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card)}
+.occasion-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;background:var(--grad-soft);border-bottom:1px solid var(--line)}
+.occasion-head h3{font-size:21px;margin:0;color:var(--wine);font-weight:700}
+.occasion-head h3 em{color:var(--rose);font-weight:500}
+.occasion-head .when{font-size:13.5px;color:var(--ink-soft);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.occasion-head .when b{color:var(--rose-deep)}
+.row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:14px 20px;border-bottom:1px dashed var(--line);align-items:center}
+.row:last-of-type{border-bottom:none}
+.row .t{font-size:17px;font-weight:600}
+.row .t s{color:var(--ink-soft);font-weight:400}
+.row .m{font-size:14px;color:var(--ink-soft)}
+.row .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.row .p{font-weight:700;color:var(--wine);margin-right:4px}
+.total{text-align:right;color:var(--ink-soft);padding:12px 20px;background:var(--surface-2);border-top:1px solid var(--line)}
+.total b{color:var(--wine)}
+@media (max-width:620px){.row{grid-template-columns:1fr}.row .r{justify-content:flex-start}}
+
+/* ---------- modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(61,32,48,.38);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.overlay.show{display:flex}
+.modal{
+  width:min(540px,100%);max-height:92vh;overflow:auto;background:var(--card);border-radius:22px;
+  padding:0 30px 26px;position:relative;box-shadow:0 40px 80px -30px rgba(61,32,48,.6);animation:pop .25s ease;
+  border:1px solid var(--line);
+}
+.modal::before{content:"";display:block;height:8px;margin:0 -30px 24px;background:var(--grad-main)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.modal h2{font-size:27px;margin:0 0 4px;text-align:center;font-weight:800;font-weight:900;background:var(--grad-title);-webkit-background-clip:text;background-clip:text;color:transparent}
+.modal h2 em{font-weight:400}
+.modal .lede{text-align:center;color:var(--ink-soft);margin:0 0 20px;font-size:15px}
+.modal .x{position:absolute;top:18px;right:16px;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;color:var(--ink-soft)}
+.modal .x:hover{background:var(--blush);color:var(--wine)}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label,.label{font-size:13px;font-weight:600;color:var(--wine)}
+.field input,.field select,.field textarea{
+  border:1.5px solid var(--field-line);background:var(--surface);border-radius:12px;padding:10px 14px;font-size:16px;outline:none;height:46px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.field textarea{height:auto;min-height:80px;resize:vertical}
+.field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23a83563' stroke-width='1.8' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(208,86,127,.15)}
+.money{position:relative}
+.money input{width:100%;padding-right:62px;font-weight:600}
+.money .unit{position:absolute;right:6px;top:6px;bottom:6px;display:flex;align-items:center;padding:0 10px;border-radius:8px;background:var(--grad-main);color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em}
+.hint{font-size:12.5px;color:var(--ink-soft);min-height:1.2em}
+.hint b{color:var(--rose-deep)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:480px){.two{grid-template-columns:1fr}}
+.heart-pick{display:flex;gap:6px}
+.heart-pick button{border:1.5px solid var(--line);background:var(--surface);font-size:22px;color:#e8c3cf;cursor:pointer;width:46px;height:42px;border-radius:12px;line-height:1}
+.heart-pick button.on{color:#fff;background:var(--grad-main);border-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{height:38px;border:1.5px solid var(--field-line);background:var(--surface);border-radius:999px;padding:0 16px;cursor:pointer;font-weight:500;font-size:14px;color:var(--wine)}
+.chips button:hover{border-color:var(--rose)}
+.chips button.on{background:var(--grad-main);border-color:transparent;color:#fff}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 16px}
+.who-grid button{
+  font-size:24px;font-weight:700;padding:30px 10px;border:1.5px solid var(--line);border-radius:18px;
+  background:var(--grad-soft);color:var(--wine);cursor:pointer;transition:all .2s;
+}
+.who-grid button:hover,.who-grid button.on{background:var(--grad-main);color:#fff;border-color:transparent;box-shadow:0 14px 28px -14px rgba(168,53,99,.85)}
+.ideas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:480px){.ideas{grid-template-columns:1fr}}
+.idea{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 14px;border:1.5px solid var(--field-line);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s}
+.idea:hover{border-color:var(--rose);background:var(--surface-2);transform:translateY(-1px)}
+.idea .it{font-weight:600;font-size:14.5px;color:var(--ink)}
+.idea .ip{font-size:12.5px;color:var(--rose-deep)}
+.idea.has{opacity:.5;cursor:default}
+.modal.welcome{text-align:center;width:min(440px,100%);padding-bottom:34px}
+.modal.welcome .w-orn{font-size:14px;letter-spacing:.6em;color:var(--rose);margin-top:8px}
+.modal.welcome h2{font-size:44px;line-height:1.1;margin:16px 0 12px}
+.modal.welcome .w-cap{font-size:18px;color:var(--ink-soft);margin:0 auto 26px;max-width:300px}
+.modal.welcome .w-go{height:48px;padding:0 34px;font-size:16px}
+em{font-style:normal;font-weight:inherit}
+.masthead .sub b,.lead b,.stat b,.next b,.status-line b,.occasion-head .when b,.total b,.who-btn b,.hint b{font-weight:inherit}
+.err{color:var(--danger);font-size:14px;min-height:1em}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);opacity:0;z-index:60;
+  background:var(--grad-main);color:#fff;font-weight:600;font-size:14px;padding:12px 20px;border-radius:14px;
+  box-shadow:0 16px 30px -14px rgba(122,31,74,.8);transition:all .3s;pointer-events:none;max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- music player ---------- */
+.player{
+  position:fixed;right:18px;bottom:18px;z-index:40;width:370px;
+  background:var(--sheet-strong);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:20px;
+  box-shadow:0 24px 50px -24px rgba(122,31,74,.7);overflow:hidden;
+}
+.player::before{content:"";display:block;height:5px;background:var(--grad-main)}
+.p-main{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.record{
+  width:52px;height:52px;border-radius:50%;flex:none;position:relative;
+  background:
+    radial-gradient(circle, #fff 0 3px, transparent 3.5px),
+    radial-gradient(circle, transparent 0 14px, transparent 14px),
+    repeating-radial-gradient(circle, #3a1a2a 0 1px, #4d2538 1.5px 2.5px);
+  box-shadow:0 0 0 2px var(--surface), 0 6px 14px -6px rgba(61,32,48,.7);
+  animation:spin 3.6s linear infinite;animation-play-state:paused;
+}
+.record::before{content:"";position:absolute;inset:16px;border-radius:50%;background:var(--grad-main)}
+.record::after{content:"";position:absolute;width:5px;height:5px;border-radius:50%;background:var(--surface);top:50%;left:50%;transform:translate(-50%,-50%)}
+.player.on .record{animation-play-state:running}
+@keyframes spin{to{transform:rotate(360deg)}}
+.p-info{flex:1;min-width:0}
+.p-info .ttl{font-weight:700;font-size:15px;color:var(--wine);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-info .st{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-ctrl{display:flex;align-items:center;gap:6px}
+.p-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--wine);cursor:pointer;display:grid;place-items:center;padding:0;transition:all .2s}
+.p-btn:hover{border-color:var(--rose);background:var(--surface-2)}
+.p-btn svg{width:15px;height:15px}
+.p-btn.play{width:44px;height:44px;background:var(--grad-main);border-color:transparent;color:#fff;box-shadow:0 8px 16px -8px rgba(168,53,99,.85)}
+.p-btn.play:hover{background:var(--grad-hover)}
+.p-btn.play svg{width:18px;height:18px}
+.p-sub{display:flex;align-items:center;gap:10px;padding:0 14px 12px}
+.p-sub input[type=range]{flex:1;accent-color:var(--rose-deep)}
+.p-sub .vol-ic{color:var(--ink-soft);font-size:12.5px;white-space:nowrap}
+.p-list-btn{font-size:12.5px;font-weight:600;color:var(--rose-deep);background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.p-list{display:none;border-top:1px solid var(--line);padding:6px}
+.player.open .p-list{display:block}
+.p-track{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 10px;border:none;background:transparent;border-radius:12px;cursor:pointer}
+.p-track:hover{background:var(--surface-2)}
+.p-track .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface);border:1.5px solid var(--line);color:var(--rose-deep);flex:none}
+.p-track.cur .n{background:var(--grad-main);color:#fff;border-color:transparent}
+.p-track .tt{font-weight:600;font-size:14px;color:var(--wine);display:block}
+.p-track .ss{font-size:12px;color:var(--ink-soft);display:block}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-left:auto}
+.eq i{width:3px;height:3px;background:var(--rose);border-radius:1px}
+.player.on .p-track.cur .eq i{animation:eq 1s ease-in-out infinite}
+.player.on .p-track.cur .eq i:nth-child(2){animation-delay:.25s}.player.on .p-track.cur .eq i:nth-child(3){animation-delay:.5s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+@media (max-width:620px){.player{width:auto;left:10px;right:10px;bottom:10px}}
+
+footer{text-align:center;margin-top:44px;font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;background:var(--grad-main);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+</head>
+<body>
+
+<main class="sheet">
+  <div class="topline">
+    <span class="date">Vol. I &nbsp;·&nbsp; <span id="today"></span></span>
+    <span class="who">
+      <button class="btn small pill who-btn" id="whoBtn" type="button">
+        Bạn là: <b id="whoName">—</b>
+      </button>
+      <button class="btn small pill" id="settingsBtn" type="button" title="Đổi tên hai người">
+        Đổi tên
+      </button>
+      <button class="btn small pill theme-btn" id="themeBtn" type="button" title="Đổi giao diện sáng / tối">
+        <span id="themeLbl">Tối</span>
+      </button>
+    </span>
+  </div>
+
+  <header class="masthead">
+    <h1>My <em>Wish</em> List</h1>
+    <div class="sub">Những món quà trong List này có thể làm người ấy vui</div>
+    <div class="stats">
+      <div class="stat" id="statA">&nbsp;</div>
+      <div class="next" id="nextOcc"></div>
+      <div class="stat right" id="statB">&nbsp;</div>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+
+  <section id="view"></section>
+
+  <footer>
+    <span id="footNames">Anh &amp; Em</span> &nbsp;·&nbsp; MMXXVI
+  </footer>
+</main>
+
+<!-- music player -->
+<div class="player" id="player">
+  <div class="p-main">
+    <div class="record" aria-hidden="true"></div>
+    <div class="p-info">
+      <div class="ttl" id="pTitle">—</div>
+      <div class="st" id="pSub">Nhạc nền</div>
+    </div>
+    <div class="p-ctrl">
+      <button class="p-btn" id="pPrev" type="button" aria-label="Bài trước"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button class="p-btn play" id="pPlay" type="button" aria-label="Phát / tạm dừng"><svg id="pPlayIc" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg></button>
+      <button class="p-btn" id="pNext" type="button" aria-label="Bài tiếp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    </div>
+  </div>
+  <div class="p-sub">
+    <span class="vol-ic">Âm lượng</span>
+    <input type="range" id="vol" min="0" max="100" value="60" aria-label="Âm lượng">
+    <button class="p-list-btn" id="pListBtn" type="button">Danh sách</button>
+  </div>
+  <div class="p-list" id="pList"></div>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ============================ helpers ============================ */
+const $ = (s, el = document) => el.querySelector(s);
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) {
+    if (k == null || k === false) continue;
+    el.append(k.nodeType ? k : document.createTextNode(String(k)));
+  }
+  return el;
+}
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const fmtNum = n => new Intl.NumberFormat("vi-VN").format(n);
+const fmtMoney = n => fmtNum(n) + " VND";
+function parsePrice(s) {
+  if (s == null) return null;
+  s = String(s).trim().toLowerCase().replace(/\s+/g, "").replace(/đ|₫|vnd/g, "");
+  if (!s) return null;
+  let mult = 1;
+  if (/(tr|m|triệu)$/.test(s)) { mult = 1e6; s = s.replace(/(triệu|tr|m)$/, ""); }
+  else if (/k$/.test(s)) { mult = 1e3; s = s.slice(0, -1); }
+  if (mult > 1) s = s.replace(",", ".");
+  else s = s.replace(/[.,]/g, "");
+  const n = parseFloat(s);
+  return isFinite(n) && n >= 0 ? Math.round(n * mult) : null;
+}
+function safeUrl(u) {
+  if (!u) return null;
+  u = String(u).trim();
+  if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+  try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch { return null; }
+}
+function parseDate(s) {
+  if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+function daysUntil(s) {
+  const d = parseDate(s); if (!d) return null;
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((d - t) / 86400000);
+}
+function fmtDate(s) {
+  const d = parseDate(s); if (!d) return "";
+  return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+function countdown(s) {
+  const n = daysUntil(s);
+  if (n == null) return "";
+  if (n === 0) return "hôm nay!";
+  if (n === 1) return "ngày mai";
+  if (n > 0) return "còn " + n + " ngày";
+  return "đã qua " + (-n) + " ngày";
+}
+
+const CATS = [
+  ["fashion", "Thời trang"], ["beauty", "Làm đẹp"], ["books", "Sách & giấy"],
+  ["tech", "Công nghệ"], ["home", "Nhà cửa"], ["food", "Ăn uống"],
+  ["experience", "Trải nghiệm"], ["other", "Linh tinh"],
+];
+const LEVELS = { 1: "Thích", 2: "Rất thích", 3: "Mê lắm" };
+const catLabel = k => (CATS.find(c => c[0] === k) || CATS[CATS.length - 1])[1];
+const OCCASIONS = ["Sinh nhật", "Kỷ niệm", "Valentine", "8/3", "20/10", "Giáng sinh", "Tết", "Bất ngờ"];
+
+/* ============================ state ============================ */
+const state = {
+  me: (() => { const v = ls.get("wl_me"); return v === "0" ? 0 : v === "1" ? 1 : null; })(),
+  names: ["Anh", "Em"],
+  items: [],
+  tab: null,          // 0, 1, or "picks"
+  sort: "new",
+  filter: "all",
+  mode: "loading",    // loading | db | local
+  loaded: false,
+  readOnly: false,
+};
+
+const partner = () => state.me == null ? null : 1 - state.me;
+const nameOf = i => (state.names[i] || (i ? "Em" : "Anh"));
+
+/* ============================ storage ============================ */
+// Shared mode: /api/state (Vercel function + Upstash Redis). Falls back to this browser only.
+const LOCAL_ITEMS = "wl_local_items", LOCAL_CFG = "wl_local_cfg";
+function localLoad() {
+  try { state.items = JSON.parse(ls.get(LOCAL_ITEMS) || "[]"); } catch { state.items = []; }
+  try { const c = JSON.parse(ls.get(LOCAL_CFG) || "null"); if (c && Array.isArray(c.names)) state.names = c.names; } catch {}
+}
+function localSave() { ls.set(LOCAL_ITEMS, JSON.stringify(state.items)); }
+
+const API = "/api/state";
+let pass = ls.get("wl_pass") || "";
+let pollT = null, busy = 0, lastVer = null;
+async function api(method, body) {
+  let r;
+  try {
+    r = await fetch(API, { method, cache: "no-store", headers: { "Content-Type": "application/json", "x-wl-key": pass }, body: body ? JSON.stringify(body) : undefined });
+  } catch { const e = new Error("network"); e.code = "network"; throw e; }
+  if (r.status === 401) { const e = new Error("passcode"); e.code = "passcode"; throw e; }
+  if (r.status === 503) { const e = new Error("no_db"); e.code = "no_db"; throw e; }
+  if (r.status === 404) { const e = new Error("no_api"); e.code = "no_api"; throw e; }
+  if (!r.ok) { const e = new Error("http"); e.code = "http"; throw e; }
+  return r.json();
+}
+function applyState(st) {
+  lastVer = st.ver;
+  state.items = Array.isArray(st.items) ? st.items : [];
+  if (st.config && Array.isArray(st.config.names) && st.config.names.length === 2) state.names = st.config.names.map(String);
+  state.loaded = true;
+  render();
+}
+async function pull() {
+  if (busy || state.mode !== "remote") return;
+  try { const st = await api("GET"); banner(null); if (st.ver !== lastVer) applyState(st); }
+  catch (e) { if (e.code === "passcode") needPass(); else banner("Mất kết nối, đang thử lại…"); }
+}
+function startPolling() {
+  clearInterval(pollT);
+  pollT = setInterval(() => { if (!document.hidden) pull(); }, 4000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) pull(); });
+
+async function send(body, optimistic) {
+  if (state.mode !== "remote") return false;
+  busy++;
+  const snapshot = JSON.stringify(state.items);
+  try {
+    if (optimistic) { optimistic(); render(); }
+    const st = await api("POST", body);
+    busy--; applyState(st); return true;
+  } catch (e) {
+    busy--;
+    state.items = JSON.parse(snapshot); render();
+    if (e.code === "passcode") needPass(); else toast("Không lưu được, thử lại.");
+    return false;
+  }
+}
+const upsert = item => { const i = state.items.findIndex(x => x.id === item.id); if (i >= 0) state.items[i] = item; else state.items.push(item); };
+
+const Store = {
+  async put(item) {
+    if (state.mode === "remote") return send({ op: "put", item }, () => upsert(item));
+    upsert(item); localSave(); render(); return true;
+  },
+  async patch(id, p) {
+    const apply = () => { const it = state.items.find(x => x.id === id); if (it) Object.assign(it, p); };
+    if (state.mode === "remote") return send({ op: "patch", id, patch: p }, apply);
+    apply(); localSave(); render(); return true;
+  },
+  async del(id) {
+    const apply = () => { state.items = state.items.filter(x => x.id !== id); };
+    if (state.mode === "remote") return send({ op: "del", id }, apply);
+    apply(); localSave(); render(); return true;
+  },
+  async saveNames(names) {
+    if (state.mode === "remote") return send({ op: "names", names }, () => { state.names = names; });
+    state.names = names; ls.set(LOCAL_CFG, JSON.stringify({ names })); render(); return true;
+  },
+};
+
+let welcomeOpen = false, passPending = false;
+function needPass() {
+  passPending = true;
+  if (!welcomeOpen) passModal();
+}
+function afterWelcome() {
+  welcomeOpen = false;
+  if (passPending) passModal();
+  else if (state.me == null) whoModal(true);
+}
+function passModal() {
+  openModal(m => {
+    modalLocked = true;
+    const inp = h("input", { type: "password", placeholder: "Mã truy cập", autocomplete: "current-password" });
+    const err = h("div", { class: "err" });
+    const go = async () => {
+      pass = inp.value.trim(); if (!pass) return;
+      try {
+        const st = await api("GET");
+        ls.set("wl_pass", pass); passPending = false;
+        applyState(st); startPolling(); banner(null);
+        closeModal();
+        if (state.me == null) whoModal(true);
+      } catch (e) { err.textContent = e.code === "passcode" ? "Sai mã." : "Không kết nối được."; }
+    };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+    m.append(h("h2", null, "Nhập mã"), h("div", { style: "height:8px" }),
+      h("div", { class: "field" }, inp), err,
+      h("div", { class: "modal-actions" }, h("button", { class: "btn primary", type: "button", onclick: go }, "Mở")));
+  });
+}
+
+function startLocal(msg) {
+  state.mode = "local"; localLoad(); state.loaded = true;
+  banner(msg || "Đang lưu trên máy này.");
+  render();
+}
+async function connect() {
+  if (location.protocol === "file:") { startLocal(); return; }
+  state.mode = "remote";
+  try { const st = await api("GET"); applyState(st); startPolling(); }
+  catch (e) {
+    if (e.code === "passcode") { needPass(); return; }
+    if (e.code === "no_db") { startLocal("Chưa kết nối database. Đang lưu trên máy này."); return; }
+    if (e.code === "no_api") { startLocal(); return; }
+    banner("Chưa kết nối được, đang thử lại…"); startPolling();
+  }
+}
+
+/* ============================ UI bits ============================ */
+let toastT;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function banner(msg) {
+  const b = $("#banner");
+  if (!msg) { b.classList.remove("show"); return; }
+  b.textContent = msg; b.classList.add("show");
+}
+function openModal(build) {
+  afterClose = null; modalLocked = false;
+  const m = $("#modal"); m.classList.remove("welcome"); m.replaceChildren(); build(m);
+  $("#overlay").classList.add("show");
+  const f = m.querySelector("input,textarea,select,button.focus"); if (f) setTimeout(() => f.focus(), 30);
+}
+let modalLocked = false, afterClose = null;
+function closeModal() {
+  $("#overlay").classList.remove("show"); $("#modal").classList.remove("welcome");
+  modalLocked = false;
+  const f = afterClose; afterClose = null; if (f) f();
+}
+$("#overlay").addEventListener("mousedown", e => { if (e.target.id === "overlay" && !modalLocked) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !modalLocked && $("#overlay").classList.contains("show")) closeModal(); });
+const xBtn = () => h("button", { class: "x", type: "button", "aria-label": "Đóng", onclick: closeModal }, "×");
+
+/* ---------- who am I ---------- */
+function whoModal(force) {
+  openModal(m => {
+    modalLocked = !!force;
+    if (!force) m.append(xBtn());
+    m.append(
+      h("h2", null, "Bạn là ai?"),
+      h("p", { class: "lede" }, "Chọn tên của bạn"),
+      h("div", { class: "who-grid" }, [0, 1].map(i =>
+        h("button", { type: "button", class: state.me === i ? "on" : "", onclick: () => {
+          state.me = i; ls.set("wl_me", String(i)); state.tab = i; closeModal(); render();
+        } }, nameOf(i)))),
+      h("div", { class: "modal-actions" },
+        h("button", { class: "btn small", type: "button", onclick: () => settingsModal(force) }, "Đổi tên"))
+    );
+  });
+}
+
+/* ---------- settings ---------- */
+function settingsModal(fromWho) {
+  openModal(m => {
+    const a = h("input", { value: nameOf(0), maxlength: "24" });
+    const b = h("input", { value: nameOf(1), maxlength: "24" });
+    const err = h("div", { class: "err" });
+    m.append(
+      xBtn(),
+      h("h2", null, "Tên hai người"),
+      h("div", { class: "two" },
+        h("div", { class: "field" }, h("label", null, "Người 1"), a),
+        h("div", { class: "field" }, h("label", null, "Người 2"), b)),
+      err,
+      h("div", { class: "modal-actions" },
+        h("button", { class: "btn", type: "button", onclick: () => fromWho ? whoModal(state.me == null) : closeModal() }, "Thôi"),
+        h("button", { class: "btn primary", type: "button", onclick: async () => {
+          const n = [a.value.trim(), b.value.trim()];
+          if (!n[0] || !n[1]) { err.textContent = "Nhập đủ hai tên."; return; }
+          const ok = await Store.saveNames(n);
+          if (ok) { state.names = n; render(); if (fromWho && state.me == null) whoModal(true); else closeModal(); toast("Đã lưu tên"); }
+        } }, "Lưu"))
+    );
+  });
+}
+
+/* ---------- add / edit item ---------- */
+function itemModal(existing, prefill) {
+  const it = existing || prefill || {};
+  openModal(m => {
+    const title = h("input", { value: it.title || "", maxlength: "90", placeholder: "Ví dụ: Máy ảnh film Olympus" });
+    const price = h("input", { value: it.price != null ? fmtNum(it.price) : "", placeholder: "Ví dụ: 350.000 hoặc 350k", inputmode: "decimal", autocomplete: "off" });
+    const priceHint = h("div", { class: "hint" });
+    const syncPrice = () => {
+      const raw = price.value;
+      if (/^[\d.\s]*$/.test(raw)) {
+        const digits = raw.replace(/\D/g, "");
+        price.value = digits ? fmtNum(Number(digits)) : "";
+      }
+      const p = parsePrice(price.value);
+      priceHint.replaceChildren();
+      if (!price.value.trim()) priceHint.append("VD: 350k, 1.2tr");
+      else if (p == null) priceHint.append("Giá chưa hợp lệ");
+      else priceHint.append("= ", h("b", null, fmtMoney(p)));
+    };
+    price.addEventListener("input", syncPrice); syncPrice();
+    const link = h("input", { value: it.link || "", placeholder: "shopee.vn/…" });
+    const cat = h("select", null, CATS.map(([k, v]) => h("option", { value: k, selected: (it.category || "other") === k }, v)));
+    const note = h("textarea", { maxlength: "300", placeholder: "Màu, size…" }, it.note || "");
+    let hearts = it.hearts || 2;
+    const hp = h("div", { class: "chips" });
+    const drawHearts = () => { hp.replaceChildren(...[1, 2, 3].map(n => h("button", { type: "button", class: n === hearts ? "on" : "", onclick: () => { hearts = n; drawHearts(); } }, LEVELS[n]))); };
+    drawHearts();
+    const err = h("div", { class: "err" });
+    const save = async () => {
+      const t = title.value.trim();
+      if (!t) { err.textContent = "Nhập tên món."; title.focus(); return; }
+      const p = price.value.trim() ? parsePrice(price.value) : null;
+      if (price.value.trim() && p == null) { err.textContent = "Giá chưa hợp lệ."; return; }
+      const l = link.value.trim();
+      if (l && !safeUrl(l)) { err.textContent = "Link chưa hợp lệ."; return; }
+      const item = Object.assign({}, existing || {
+        id: uid(), owner: state.me, createdAt: Date.now(), status: "open",
+        pickedBy: null, occasion: null, occasionDate: null, pickNote: null,
+      }, { title: t, price: p, link: l ? safeUrl(l) : "", category: cat.value, note: note.value.trim(), hearts });
+      const ok = await Store.put(item);
+      if (ok) { closeModal(); toast(existing ? "Đã lưu" : "Đã thêm"); }
+    };
+    m.append(
+      xBtn(),
+      h("h2", null, existing ? "Sửa món" : "Thêm món"),
+      h("div", { style: "height:8px" }),
+      h("div", { class: "field" }, h("label", null, "Tên món *"), title),
+      h("div", { class: "two" },
+        h("div", { class: "field" }, h("label", null, "Giá (VND)"), h("div", { class: "money" }, price, h("span", { class: "unit" }, "VND")), priceHint),
+        h("div", { class: "field" }, h("label", null, "Phân loại"), cat)),
+      h("div", { class: "field" }, h("label", null, "Link tham khảo"), link),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Mức độ thích"), hp),
+      h("div", { class: "field" }, h("label", null, "Ghi chú"), note),
+      err,
+      h("div", { class: "modal-actions" },
+        h("button", { class: "btn", type: "button", onclick: closeModal }, "Huỷ"),
+        h("button", { class: "btn primary", type: "button", onclick: save }, existing ? "Lưu" : "Thêm"))
+    );
+    m.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); save(); } });
+  });
+}
+
+/* ---------- gift ideas ---------- */
+const IDEAS = [
+  ["fashion","Khăn len handmade",250000],["fashion","Túi tote canvas",180000],["fashion","Kẹp tóc ngọc trai",120000],["fashion","Đồng hồ dây da",1200000],["fashion","Áo len cardigan",450000],
+  ["beauty","Son kem lì",300000],["beauty","Bộ dưỡng da mini",500000],["beauty","Nước hoa mini",800000],["beauty","Mặt nạ ngủ",250000],
+  ["books","Sổ tay bìa da",220000],["books","Bộ bút màu",150000],["books","Sách tranh minh hoạ",200000],["books","Lịch để bàn 2027",120000],
+  ["tech","Tai nghe bluetooth",900000],["tech","Máy ảnh Instax mini",1800000],["tech","Sạc dự phòng",450000],["tech","Đèn ngủ mặt trăng",280000],
+  ["home","Nến thơm",250000],["home","Hoa khô trong lọ",200000],["home","Chăn nỉ mỏng",400000],["home","Cốc gốm vẽ tay",180000],["home","Cây xanh để bàn",150000],
+  ["food","Hộp bánh quy bơ",220000],["food","Set trà hoa",250000],["food","Chocolate thủ công",300000],
+  ["experience","Vé xem phim đôi",200000],["experience","Lớp học làm gốm",600000],["experience","Vé concert",1500000],["experience","Chụp ảnh đôi",1000000],["experience","Cuối tuần ở Đà Lạt",3000000],
+  ["other","Gấu bông",350000],["other","Puzzle 1000 mảnh",300000],["other","Thư tay + ảnh in",50000],
+];
+function ideasModal() {
+  let cat = "all";
+  openModal(m => {
+    const chips = h("div", { class: "chips", style: "justify-content:center;margin-bottom:14px" });
+    const list = h("div", { class: "ideas" });
+    const draw = () => {
+      chips.replaceChildren(...[["all", "Tất cả"], ...CATS.filter(c => IDEAS.some(i => i[0] === c[0]))].map(([k, l]) =>
+        h("button", { type: "button", class: cat === k ? "on" : "", onclick: () => { cat = k; draw(); } }, l)));
+      const mineTitles = new Set(state.items.filter(x => x.owner === state.me).map(x => String(x.title).toLowerCase()));
+      list.replaceChildren(...IDEAS.filter(i => cat === "all" || i[0] === cat).map(([c, t, p]) => {
+        const has = mineTitles.has(t.toLowerCase());
+        return h("button", { type: "button", class: "idea" + (has ? " has" : ""), disabled: has,
+          onclick: () => itemModal(null, { title: t, category: c, price: p, hearts: 2 }) },
+          h("span", { class: "it" }, t), h("span", { class: "ip" }, has ? "Đã có" : "~" + fmtMoney(p)));
+      }));
+    };
+    draw();
+    m.append(xBtn(), h("h2", null, "Gợi ý quà"), h("p", { class: "lede" }, "Bấm để thêm"), chips, list);
+  });
+}
+
+/* ---------- welcome ---------- */
+function welcomeModal() {
+  openModal(m => {
+    m.classList.add("welcome");
+    m.append(
+      h("h2", null, "My Wish List"),
+      h("p", { class: "w-cap" }, "Những món quà đơn giản đi kèm hạnh phúc lớn."),
+      h("button", { class: "btn primary w-go focus", type: "button", onclick: closeModal }, "Bắt đầu"));
+    welcomeOpen = true;
+    afterClose = afterWelcome;
+  });
+}
+
+/* ---------- pick for an occasion ---------- */
+function pickModal(it) {
+  openModal(m => {
+    let occ = it.occasion && OCCASIONS.includes(it.occasion) ? it.occasion : (it.occasion ? "__custom" : "Sinh nhật");
+    const custom = h("input", { value: it.occasion && !OCCASIONS.includes(it.occasion) ? it.occasion : "", placeholder: "Tên dịp khác…", maxlength: "40" });
+    const customWrap = h("div", { class: "field" }, custom);
+    const chips = h("div", { class: "chips" });
+    const draw = () => {
+      chips.replaceChildren(...OCCASIONS.map(o => h("button", { type: "button", class: occ === o ? "on" : "", onclick: () => { occ = o; draw(); } }, o)),
+        h("button", { type: "button", class: occ === "__custom" ? "on" : "", onclick: () => { occ = "__custom"; draw(); custom.focus(); } }, "Khác…"));
+      customWrap.style.display = occ === "__custom" ? "" : "none";
+    };
+    draw();
+    const date = h("input", { type: "date", value: it.occasionDate || "" });
+    const note = h("textarea", { maxlength: "300", placeholder: "Gói quà, thiệp…" }, it.pickNote || "");
+    const err = h("div", { class: "err" });
+    m.append(
+      xBtn(),
+      h("h2", null, "Chọn để tặng"),
+      h("p", { class: "lede" }, it.title),
+      h("div", { class: "field" }, h("span", { class: "label" }, "Dịp tặng"), chips),
+      customWrap,
+      h("div", { class: "field" }, h("label", null, "Ngày"), date),
+      h("div", { class: "field" }, h("label", null, "Ghi chú riêng"), note),
+      err,
+      h("div", { class: "modal-actions" },
+        h("button", { class: "btn", type: "button", onclick: closeModal }, "Huỷ"),
+        h("button", { class: "btn primary", type: "button", onclick: async () => {
+          const o = occ === "__custom" ? custom.value.trim() : occ;
+          if (!o) { err.textContent = "Nhập tên dịp."; return; }
+          const ok = await Store.patch(it.id, { status: "picked", pickedBy: state.me, occasion: o, occasionDate: date.value || null, pickNote: note.value.trim() || null });
+          if (ok) { closeModal(); toast("Đã chọn"); }
+        } }, it.status === "picked" ? "Lưu" : "Chọn"))
+    );
+  });
+}
+
+/* ============================ render ============================ */
+function confirmBtn(label, onConfirm) {
+  let armed = false, t;
+  const b = h("button", { class: "btn small danger", type: "button", onclick: () => {
+    if (armed) { clearTimeout(t); onConfirm(); return; }
+    armed = true; b.textContent = "Chắc chưa?"; b.classList.add("armed");
+    t = setTimeout(() => { armed = false; b.textContent = label; b.classList.remove("armed"); }, 3000);
+  } }, label);
+  return b;
+}
+
+function card(it, idx) {
+  const mine = state.me != null && it.owner === state.me;
+  const iPicked = it.pickedBy === state.me && state.me != null;
+  const canAct = !state.readOnly && state.me != null;
+  const title = String(it.title || "Không tên");
+  const c = h("article", { class: "card" + (it.status && it.status !== "open" ? " is-" + it.status : "") });
+  c.style.animationDelay = Math.min(idx * 40, 400) + "ms";
+
+  c.append(...[
+    h("div", { class: "card-top" }, h("span", null, "No. " + String(idx + 1).padStart(2, "0")), h("span", { class: "cat" }, catLabel(it.category))),
+    h("h3", { class: "card-title" }, title),
+    h("div", { class: "card-meta" },
+      it.price != null ? h("span", { class: "price" }, fmtNum(it.price), h("span", { class: "cur" }, "VND")) : h("span", { class: "price none" }, "chưa rõ giá"),
+      h("span", { class: "hearts" }, LEVELS[it.hearts || 1])),
+    it.note ? h("p", { class: "note" }, "“" + it.note + "”") : null,
+    it.link && safeUrl(it.link) ? h("a", { class: "link", href: safeUrl(it.link), target: "_blank", rel: "noopener noreferrer" }, "Xem link") : null
+  ].filter(Boolean));
+
+  if (it.status === "picked" || it.status === "gifted") c.classList.add("has-stamp");
+  const actions = h("div", { class: "actions" });
+  if (it.status === "gifted") {
+    c.append(h("div", { class: "stamp gifted" }, mine ? "Đã nhận" : "Đã tặng"));
+    if (mine) c.append(h("div", { class: "status-line" }, "Đã nhận"));
+    else if (iPicked) c.append(h("div", { class: "status-line" }, "Đã tặng · ", h("b", null, it.occasion || "—"), it.occasionDate ? " · " + fmtDate(it.occasionDate) : ""));
+    if (canAct && iPicked) actions.append(h("button", { class: "btn small", type: "button", onclick: () => Store.patch(it.id, { status: "picked" }) }, "Hoàn tác"));
+    if (canAct && mine) actions.append(confirmBtn("Gỡ khỏi sổ", () => Store.del(it.id)));
+  } else if (it.status === "picked") {
+    if (mine) {
+      c.append(h("div", { class: "stamp" }, "Bí mật"),
+        h("div", { class: "status-line" }, "Đã có người chọn"));
+      if (canAct) actions.append(h("button", { class: "btn small", type: "button", onclick: () => itemModal(it) }, "Sửa"));
+    } else {
+      c.append(h("div", { class: "stamp" }, "Đã chọn"));
+      if (iPicked) {
+        c.append(h("div", { class: "status-line" }, "Dịp: ", h("b", null, it.occasion || "—"),
+          it.occasionDate ? " · " + fmtDate(it.occasionDate) + " (" + countdown(it.occasionDate) + ")" : ""));
+        if (canAct) actions.append(
+          h("button", { class: "btn small gift", type: "button", onclick: async () => { if (await Store.patch(it.id, { status: "gifted", giftedAt: Date.now() })) toast("Đã tặng"); } }, "Đã tặng"),
+          h("button", { class: "btn small", type: "button", onclick: () => pickModal(it) }, "Đổi dịp"),
+          h("button", { class: "btn small", type: "button", onclick: () => Store.patch(it.id, { status: "open", pickedBy: null, occasion: null, occasionDate: null, pickNote: null }) }, "Bỏ chọn"));
+      }
+    }
+  } else {
+    if (canAct && mine) actions.append(
+      h("button", { class: "btn small", type: "button", onclick: () => itemModal(it) }, "Sửa"),
+      confirmBtn("Xoá", () => Store.del(it.id)));
+    if (canAct && !mine) actions.append(
+      h("button", { class: "btn small primary", type: "button", onclick: () => pickModal(it) }, "Chọn tặng"));
+  }
+  if (actions.childNodes.length) c.append(actions);
+  return c;
+}
+
+function sortItems(arr) {
+  const a = arr.slice();
+  const pr = x => x.price == null ? Infinity : x.price;
+  if (state.sort === "new") a.sort((x, y) => (y.createdAt || 0) - (x.createdAt || 0));
+  if (state.sort === "love") a.sort((x, y) => (y.hearts || 0) - (x.hearts || 0) || (y.createdAt || 0) - (x.createdAt || 0));
+  if (state.sort === "cheap") a.sort((x, y) => pr(x) - pr(y));
+  if (state.sort === "pricey") a.sort((x, y) => (y.price ?? -1) - (x.price ?? -1));
+  return a;
+}
+
+function renderList(owner) {
+  const v = $("#view");
+  const mine = owner === state.me;
+  let list = state.items.filter(x => x.owner === owner);
+  if (state.filter === "open") list = list.filter(x => !x.status || x.status === "open");
+  if (state.filter === "taken") list = list.filter(x => x.status === "picked" || x.status === "gifted");
+  list = sortItems(list);
+
+  const openCount = state.items.filter(x => x.owner === owner && (!x.status || x.status === "open")).length;
+  const lead = mine
+    ? h("div", { class: "lead" }, "Danh sách của ", h("b", null, "bạn"))
+    : state.me == null
+      ? h("div", { class: "lead" }, "Danh sách của ", h("b", null, nameOf(owner)))
+      : h("div", { class: "lead" }, "Danh sách của ", h("b", null, nameOf(owner)), " · ", h("b", null, openCount), " món chờ được chọn");
+
+  const sortSel = h("select", { class: "select", "aria-label": "Sắp xếp", onchange: e => { state.sort = e.target.value; render(); } },
+    [["new", "Mới thêm"], ["love", "Thích nhất"], ["cheap", "Giá tăng dần"], ["pricey", "Giá giảm dần"]].map(([k, l]) => h("option", { value: k, selected: state.sort === k }, l)));
+  const filSel = h("select", { class: "select", "aria-label": "Lọc", onchange: e => { state.filter = e.target.value; render(); } },
+    [["all", "Tất cả"], ["open", "Chưa ai chọn"], ["taken", mine ? "Đã có người để ý" : "Đã chọn / đã tặng"]].map(([k, l]) => h("option", { value: k, selected: state.filter === k }, l)));
+  const controls = h("div", { class: "controls" }, sortSel, filSel,
+    mine && !state.readOnly ? h("button", { class: "btn", type: "button", onclick: () => ideasModal() }, "Gợi ý") : null,
+    mine && !state.readOnly ? h("button", { class: "btn primary", type: "button", onclick: () => itemModal(null) }, "Thêm món") : null);
+
+  const grid = h("div", { class: "grid" });
+  if (!state.loaded) grid.append(h("div", { class: "empty" }, h("div", { class: "big" }, "Đang tải…")));
+  else if (!list.length) {
+    const total = state.items.filter(x => x.owner === owner).length;
+    if (total && state.filter !== "all") grid.append(h("div", { class: "empty" }, h("div", { class: "big" }, "Không có món phù hợp"), h("p", null, "\u00a0"), h("button", { class: "btn", type: "button", onclick: () => { state.filter = "all"; render(); } }, "Xem tất cả")));
+    else if (mine) grid.append(h("div", { class: "empty" }, h("div", { class: "big" }, "Chưa có món nào"), h("p", null, "Thêm món bạn thích, hoặc xem gợi ý"), state.readOnly ? null : h("div", { class: "controls", style: "justify-content:center" }, h("button", { class: "btn", type: "button", onclick: () => ideasModal() }, "Gợi ý"), h("button", { class: "btn primary", type: "button", onclick: () => itemModal(null) }, "Thêm món"))));
+    else grid.append(h("div", { class: "empty" }, h("div", { class: "big" }, nameOf(owner) + " chưa thêm món nào")));
+  } else list.forEach((it, i) => grid.append(card(it, i)));
+
+  v.replaceChildren(h("div", { class: "toolbar" }, lead, controls), grid);
+}
+
+function renderPicks() {
+  const v = $("#view");
+  if (state.me == null) { v.replaceChildren(h("div", { class: "grid" }, h("div", { class: "empty" }, h("div", { class: "big" }, "Bạn là ai?"), h("p", null, "\u00a0"), h("button", { class: "btn primary", type: "button", onclick: () => whoModal(false) }, "Chọn tên")))); return; }
+  const picks = state.items.filter(x => x.pickedBy === state.me && (x.status === "picked" || x.status === "gifted"));
+  const lead = h("div", { class: "lead" }, "Quà cho ", h("b", null, nameOf(partner())), " · chỉ bạn thấy");
+  const out = [h("div", { class: "toolbar" }, lead)];
+  if (!picks.length) {
+    out.push(h("div", { class: "grid" }, h("div", { class: "empty" }, h("div", { class: "big" }, "Chưa chọn món nào"),
+      h("p", null, "\u00a0"),
+      h("button", { class: "btn primary", type: "button", onclick: () => { state.tab = partner(); render(); } }, "Xem danh sách của " + nameOf(partner())))));
+    v.replaceChildren(...out); return;
+  }
+  const groups = new Map();
+  for (const p of picks) {
+    const key = (p.occasion || "—") + "|" + (p.occasionDate || "");
+    if (!groups.has(key)) groups.set(key, { occasion: p.occasion || "—", date: p.occasionDate, items: [] });
+    groups.get(key).items.push(p);
+  }
+  const arr = [...groups.values()].sort((a, b) => {
+    const da = daysUntil(a.date), dbb = daysUntil(b.date);
+    const ka = da == null ? 1e9 : da < 0 ? 1e8 - da : da;
+    const kb = dbb == null ? 1e9 : dbb < 0 ? 1e8 - dbb : dbb;
+    return ka - kb;
+  });
+  for (const g of arr) {
+    const sum = g.items.reduce((s, x) => s + (x.status !== "gifted" && x.price ? x.price : 0), 0);
+    const sec = h("section", { class: "occasion" },
+      h("div", { class: "occasion-head" },
+        h("h3", null, g.occasion + " cho " + nameOf(partner())),
+        h("span", { class: "when" }, g.date ? [fmtDate(g.date), " · ", h("b", null, countdown(g.date))] : "Chưa đặt ngày")));
+    for (const it of g.items) {
+      const gifted = it.status === "gifted";
+      sec.append(h("div", { class: "row" },
+        h("div", null,
+          h("div", { class: "t" }, gifted ? h("s", null, it.title) : it.title, gifted ? " (đã tặng)" : ""),
+          h("div", { class: "m" }, [catLabel(it.category), it.pickNote ? "“" + it.pickNote + "”" : null].filter(Boolean).join(" · "))),
+        h("div", { class: "r" },
+          h("span", { class: "p" }, it.price != null ? fmtMoney(it.price) : "—"),
+          it.link && safeUrl(it.link) ? h("a", { class: "link", href: safeUrl(it.link), target: "_blank", rel: "noopener noreferrer" }, "Xem link") : null,
+          state.readOnly ? null : gifted
+            ? h("button", { class: "btn small", type: "button", onclick: () => Store.patch(it.id, { status: "picked" }) }, "Hoàn tác")
+            : h("button", { class: "btn small gift", type: "button", onclick: async () => { if (await Store.patch(it.id, { status: "gifted", giftedAt: Date.now() })) toast("Đã tặng"); } }, "Đã tặng"),
+          state.readOnly || gifted ? null : h("button", { class: "btn small", type: "button", onclick: () => pickModal(it) }, "Đổi dịp"))));
+    }
+    if (sum) sec.append(h("div", { class: "total" }, "Còn lại: ", h("b", null, fmtMoney(sum))));
+    out.push(sec);
+  }
+  v.replaceChildren(...out);
+}
+
+function render() {
+  const [A, B] = [nameOf(0), nameOf(1)];
+  
+  $("#footNames").textContent = A + " & " + B;
+  $("#whoName").textContent = state.me == null ? "chưa chọn" : nameOf(state.me);
+  document.title = "My Wish List · " + A + " & " + B;
+
+  const stat = i => {
+    const list = state.items.filter(x => x.owner === i);
+    const open = list.filter(x => !x.status || x.status === "open").length;
+    return [h("b", null, nameOf(i)), " · " + list.length + " món · " + open + " chưa chọn"];
+  };
+  $("#statA").replaceChildren(...(state.loaded ? stat(0) : ["\u00a0"]));
+  $("#statB").replaceChildren(...(state.loaded ? stat(1) : ["\u00a0"]));
+
+  // next occasion (only my own picks)
+  const nx = $("#nextOcc");
+  const upcoming = state.me == null ? [] : state.items
+    .filter(x => x.pickedBy === state.me && x.status === "picked" && daysUntil(x.occasionDate) != null && daysUntil(x.occasionDate) >= 0)
+    .sort((a, b) => daysUntil(a.occasionDate) - daysUntil(b.occasionDate));
+  nx.replaceChildren();
+  if (upcoming.length) nx.append("Dịp tới: ", h("b", null, upcoming[0].occasion), " · " + countdown(upcoming[0].occasionDate));
+  else nx.append("Thêm · Chọn · Tặng");
+
+  if (state.tab == null) state.tab = state.me != null ? state.me : 0;
+  const tabs = $("#tabs");
+  const mk = (key, label, extra, count) => h("button", { class: "tab" + (state.tab === key ? " active" : ""), type: "button", role: "tab", "aria-selected": state.tab === key ? "true" : "false",
+    onclick: () => { state.tab = key; state.filter = "all"; render(); } }, label, extra ? h("span", { class: "tag" }, extra) : null, count ? h("span", { class: "count" }, count) : null);
+  const myPicks = state.me == null ? 0 : state.items.filter(x => x.pickedBy === state.me && x.status === "picked").length;
+  tabs.replaceChildren(
+    mk(0, A, state.me === 0 ? "bạn" : null),
+    mk(1, B, state.me === 1 ? "bạn" : null),
+    mk("picks", "Quà đã chọn", null, myPicks || null));
+
+  if (state.tab === "picks") renderPicks(); else renderList(state.tab);
+}
+
+/* ============================ music: three original soft piano pieces ============================ */
+const TRACKS = [
+  {
+    title: "Thư Gửi Mùa Đông", sub: "Piano · Đô trưởng · chậm rãi", bpm: 64, bpb: 4, loops: 2,
+    lh: { kind: "arp", step: .5, pat: ["B", 0, 1, 2, 3, 2, 1, 0] },
+    chords: [
+      [36,[43,48,52,55]], [35,[43,47,50,55]], [33,[40,45,48,52]], [31,[40,43,47,52]],
+      [29,[41,45,48,53]], [28,[43,48,52,55]], [26,[41,45,48,53]], [31,[38,43,47,50]],
+      [36,[43,48,52,55]], [35,[43,47,50,55]], [33,[40,45,48,52]], [31,[40,43,47,52]],
+      [29,[41,45,48,53]], [28,[43,48,52,55]], [26,[41,45,48,53]], [36,[43,48,52,55]],
+    ],
+    mel: [
+      [76,1.5],[74,.5],[72,1],[67,1],  [74,2],[71,1],[67,1],  [72,1.5],[71,.5],[69,1],[76,1],  [74,3],[0,1],
+      [72,1.5],[74,.5],[76,1],[77,1],  [79,2],[76,1],[72,1],  [74,1],[77,1],[76,1],[74,1],    [74,2],[71,2],
+      [76,1.5],[74,.5],[72,1],[67,1],  [74,2],[71,1],[67,1],  [72,1.5],[71,.5],[69,1],[76,1],  [74,3],[0,1],
+      [72,1.5],[74,.5],[76,1],[77,1],  [79,2],[76,1],[72,1],  [74,1],[77,1],[76,1],[71,1],    [72,4],
+    ],
+  },
+  {
+    title: "Chiều Hồng", sub: "Piano · nhịp valse · Fa trưởng", bpm: 76, bpb: 3, loops: 3,
+    lh: { kind: "arp", step: .5, pat: ["B", 0, 1, 2, 1, 0] },
+    chords: [
+      [29,[48,53,57]], [28,[48,52,57]], [26,[45,50,53]], [34,[46,50,53]],
+      [36,[45,48,53]], [36,[43,48,52]], [29,[48,53,57]], [36,[43,48,52]],
+      [29,[48,53,57]], [33,[45,48,52]], [34,[46,50,53]], [31,[46,50,55]],
+      [36,[45,48,53]], [36,[46,48,52]], [29,[48,53,57]], [29,[45,48,53]],
+    ],
+    mel: [
+      [72,2],[77,1],  [76,1.5],[74,.5],[72,1],  [74,2],[69,1],  [70,2],[74,1],
+      [72,1],[69,1],[65,1],  [67,3],  [69,1],[72,1],[77,1],  [76,3],
+      [77,2],[79,1],  [76,1.5],[74,.5],[72,1],  [74,1],[77,1],[74,1],  [70,2],[67,1],
+      [69,1.5],[72,.5],[77,1],  [76,2],[72,1],  [77,3],  [0,3],
+    ],
+  },
+  {
+    title: "Mưa Trên Phố Cũ", sub: "Piano · La thứ · trầm lắng", bpm: 58, bpb: 4, loops: 3,
+    lh: { kind: "block" },
+    chords: [
+      [33,[57,60,64,67]], [29,[53,57,60,64]], [36,[55,60,64,67]], [31,[55,59,62,64]],
+      [38,[53,57,60,62]], [40,[55,59,62,64]], [29,[53,57,60,64]], [40,[56,59,62,64]],
+    ],
+    mel: [
+      [76,1],[72,1],[74,1.5],[76,.5],  [72,3],[69,1],  [67,1],[72,1],[76,1],[79,1],  [76,2],[74,2],
+      [72,1.5],[74,.5],[77,2],  [76,1],[74,1],[71,2],  [72,1],[76,1],[81,1.5],[79,.5],  [80,3],[0,1],
+    ],
+  },
+];
+
+function buildEvents(tr) {
+  const ev = [];
+  let t = 0;
+  for (const [m, d] of tr.mel) { if (m) ev.push({ t, kind: "mel", m, d }); t += d; }
+  tr.chords.forEach(([b, up], bar) => {
+    const b0 = bar * tr.bpb, end = b0 + tr.bpb;
+    if (tr.lh.kind === "arp") {
+      tr.lh.pat.forEach((p, k) => {
+        const tt = b0 + k * tr.lh.step;
+        const m = p === "B" ? b : up[p % up.length];
+        ev.push({ t: tt, kind: p === "B" ? "bass" : "lh", m, d: end - tt + .4 });
+      });
+    } else {
+      ev.push({ t: b0, kind: "bass", m: b, d: tr.bpb + .3 });
+      up.forEach((m, k) => {
+        ev.push({ t: b0 + k * .06, kind: "lh", m, d: 2.1 });
+        ev.push({ t: b0 + 2 + k * .05, kind: "lh2", m, d: 2.2 });
+      });
+    }
+  });
+  ev.sort((a, b) => a.t - b.t);
+  return { ev, beats: tr.chords.length * tr.bpb };
+}
+const BUILT = TRACKS.map(buildEvents);
+
+const Music = (() => {
+  let ctx = null, master = null, bus = null, wave = null, noise = null;
+  let playing = false, cur = 0, timer = null, idx = 0, loopStart = 0, loopN = 0, advanceT = null, waiting = false;
+  let vol = .36;
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  function impulse(sec, decay) {
+    const len = Math.floor(ctx.sampleRate * sec), buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+    return buf;
+  }
+  function init() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = .01; comp.release.value = .3;
+    const warm = ctx.createBiquadFilter(); warm.type = "lowshelf"; warm.frequency.value = 250; warm.gain.value = 2;
+    const air = ctx.createBiquadFilter(); air.type = "highshelf"; air.frequency.value = 6000; air.gain.value = -4;
+    const rev = ctx.createConvolver(); rev.buffer = impulse(3.4, 3);
+    const wet = ctx.createGain(); wet.gain.value = .3;
+    const dry = ctx.createGain(); dry.gain.value = .85;
+    master.connect(warm); warm.connect(air); air.connect(comp);
+    comp.connect(dry); comp.connect(rev); rev.connect(wet);
+    dry.connect(ctx.destination); wet.connect(ctx.destination);
+    // piano-like harmonic spectrum
+    const n = 18, re = new Float32Array(n), im = new Float32Array(n);
+    for (let i = 1; i < n; i++) im[i] = Math.pow(i, -1.65) * (i === 7 || i === 9 ? .4 : 1);
+    wave = ctx.createPeriodicWave(re, im);
+    const nl = Math.floor(ctx.sampleRate * .05); noise = ctx.createBuffer(1, nl, ctx.sampleRate);
+    const nd = noise.getChannelData(0); for (let i = 0; i < nl; i++) nd[i] = (Math.random() * 2 - 1) * (1 - i / nl);
+    return true;
+  }
+  function piano(m, t, v, dur) {
+    const f = mtof(m);
+    const g = ctx.createGain();
+    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = .5;
+    const bright = Math.min(f * (2.5 + 9 * v), 9000);
+    lp.frequency.setValueAtTime(bright, t);
+    lp.frequency.setTargetAtTime(Math.max(f * 1.8, 380), t + .01, .25 + Math.max(0, 96 - m) / 110);
+    const tau = .55 + Math.max(0, 100 - m) / 26;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(v, t + .006);
+    g.gain.setTargetAtTime(v * .45, t + .006, .09);
+    g.gain.setTargetAtTime(0, t + .2, tau);
+    g.gain.setTargetAtTime(0, t + dur, .18);
+    const o1 = ctx.createOscillator(); o1.setPeriodicWave(wave); o1.frequency.value = f; o1.detune.value = -2.2;
+    const o2 = ctx.createOscillator(); o2.setPeriodicWave(wave); o2.frequency.value = f; o2.detune.value = 2.4;
+    const o3 = ctx.createOscillator(); o3.type = "sine"; o3.frequency.value = f;   // round fundamental
+    const g3 = ctx.createGain(); g3.gain.value = .55;
+    o1.connect(lp); o2.connect(lp); o3.connect(g3); g3.connect(lp); lp.connect(g);
+    let node = g;
+    if (ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = Math.max(-.6, Math.min(.6, (m - 62) / 38)); g.connect(p); node = p; }
+    node.connect(bus);
+    const stopAt = t + dur + 1.2;
+    [o1, o2, o3].forEach(o => { o.start(t); o.stop(stopAt); });
+    // soft hammer
+    const hs = ctx.createBufferSource(); hs.buffer = noise;
+    const hb = ctx.createBiquadFilter(); hb.type = "bandpass"; hb.frequency.value = Math.min(f * 6, 5000); hb.Q.value = 1.2;
+    const hg = ctx.createGain(); hg.gain.value = v * .05;
+    hs.connect(hb); hb.connect(hg); hg.connect(bus); hs.start(t);
+  }
+  function schedule() {
+    if (waiting) return;
+    const tr = TRACKS[cur], B = BUILT[cur], beat = 60 / tr.bpm, ahead = ctx.currentTime + .6;
+    while (true) {
+      const e = B.ev[idx];
+      const when = loopStart + e.t * beat + (Math.random() - .5) * .014;
+      if (when > ahead) break;
+      const up = loopN % 2 === 1;
+      const r = .88 + Math.random() * .24;
+      if (e.kind === "mel") piano(e.m + (up && e.m < 80 ? 12 : 0), when, (up ? .2 : .26) * r, e.d * beat * 1.05 + .15);
+      else if (e.kind === "bass") piano(e.m, when, .2 * r, e.d * beat);
+      else if (e.kind === "lh") piano(e.m, when, .1 * r, e.d * beat);
+      else if (e.kind === "lh2") piano(e.m, when, .07 * r, e.d * beat);
+      idx++;
+      if (idx >= B.ev.length) {
+        idx = 0; loopN++;
+        loopStart += B.beats * beat;
+        if (loopN >= tr.loops) {
+          waiting = true;
+          const ms = (loopStart - ctx.currentTime) * 1000 + 2200;
+          advanceT = setTimeout(() => { waiting = false; go(cur + 1); }, ms);
+          break;
+        }
+      }
+    }
+  }
+  function newBus() {
+    if (bus) { const old = bus; old.gain.setTargetAtTime(0, ctx.currentTime, .25); setTimeout(() => old.disconnect(), 2500); }
+    bus = ctx.createGain(); bus.gain.value = 1; bus.connect(master);
+  }
+  function go(i) {
+    cur = ((i % TRACKS.length) + TRACKS.length) % TRACKS.length;
+    try { localStorage.setItem("wl_track", String(cur)); } catch {}
+    clearTimeout(advanceT); waiting = false;
+    if (playing) { newBus(); idx = 0; loopN = 0; loopStart = ctx.currentTime + .35; }
+    ui();
+  }
+  async function play() {
+    if (!ctx && !init()) { toast("Trình duyệt này chưa phát được nhạc."); return; }
+    try { await ctx.resume(); } catch {}
+    if (playing) return;
+    playing = true; newBus(); idx = 0; loopN = 0; waiting = false; loopStart = ctx.currentTime + .2;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(vol, ctx.currentTime + 1.5);
+    clearInterval(timer); timer = setInterval(schedule, 120); schedule();
+    ui();
+  }
+  function stop() {
+    if (!playing) return;
+    playing = false; clearInterval(timer); clearTimeout(advanceT); waiting = false;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + .8);
+    ui();
+  }
+  function setVol(v) { vol = v; if (playing && ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(v, ctx.currentTime, .08); } }
+  function ui() {
+    const tr = TRACKS[cur];
+    $("#player").classList.toggle("on", playing);
+    $("#pTitle").textContent = tr.title;
+    $("#pSub").textContent = playing ? "Đang phát" : "Nhạc nền";
+    $("#pPlayIc").innerHTML = playing ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4v16l13-8z"/>';
+    $("#pList").replaceChildren(...TRACKS.map((t, i) => h("button", { class: "p-track" + (i === cur ? " cur" : ""), type: "button",
+      onclick: () => { go(i); if (!playing) { play(); try { localStorage.setItem("wl_music", "on"); } catch {} } } },
+      h("span", { class: "n" }, i + 1), h("span", null, h("span", { class: "tt" }, t.title), h("span", { class: "ss" }, t.sub)),
+      h("span", { class: "eq" }, h("i"), h("i"), h("i")))));
+  }
+  try { const s = Number(localStorage.getItem("wl_track")); if (s >= 0 && s < TRACKS.length) cur = s; } catch {}
+  return { play, stop, setVol, go, ui, get playing() { return playing; }, get cur() { return cur; } };
+})();
+
+Music.ui();
+$("#pPlay").addEventListener("click", e => {
+  e.stopPropagation();
+  if (Music.playing) { Music.stop(); ls.set("wl_music", "off"); } else { Music.play(); ls.set("wl_music", "on"); }
+});
+$("#pNext").addEventListener("click", e => { e.stopPropagation(); Music.go(Music.cur + 1); if (!Music.playing) { Music.play(); ls.set("wl_music", "on"); } });
+$("#pPrev").addEventListener("click", e => { e.stopPropagation(); Music.go(Music.cur - 1); if (!Music.playing) { Music.play(); ls.set("wl_music", "on"); } });
+$("#pListBtn").addEventListener("click", () => $("#player").classList.toggle("open"));
+$("#vol").addEventListener("input", e => { const v = Number(e.target.value) / 100; Music.setVol(v * v); ls.set("wl_vol", e.target.value); });
+(() => { const v = ls.get("wl_vol"); if (v != null) $("#vol").value = v; const x = Number($("#vol").value) / 100; Music.setVol(x * x); })();
+// background music starts on the first interaction (browsers block autoplay), unless turned off before
+const firstTouch = e => {
+  document.removeEventListener("pointerdown", firstTouch, true);
+  document.removeEventListener("keydown", firstTouch, true);
+  if (e && e.target && e.target.closest && e.target.closest("#player")) return;
+  if (ls.get("wl_music") !== "off" && !Music.playing) Music.play();
+};
+document.addEventListener("pointerdown", firstTouch, true);
+document.addEventListener("keydown", firstTouch, true);
+
+/* ============================ boot ============================ */
+$("#today").textContent = new Date().toLocaleDateString("vi-VN", { day: "numeric", month: "long", year: "numeric" });
+$("#whoBtn").addEventListener("click", () => whoModal(false));
+$("#settingsBtn").addEventListener("click", () => settingsModal(false));
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  $("#themeLbl").textContent = t === "dark" ? "Sáng" : "Tối";
+}
+applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light");
+$("#themeBtn").addEventListener("click", () => {
+  const t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  applyTheme(t); ls.set("wl_theme", t);
+});
+render();
+welcomeModal();
+connect();
+})();
+</script>
+</body>
+</html>
