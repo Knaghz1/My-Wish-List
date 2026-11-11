@@ -306,6 +306,23 @@ em{font-style:normal;font-weight:inherit}
 .masthead .sub b,.lead b,.stat b,.next b,.status-line b,.occasion-head .when b,.total b,.who-btn b,.hint b{font-weight:inherit}
 .room-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;margin:4px 0 8px;border:1px dashed var(--line);border-radius:12px;font-size:14px;color:var(--ink-soft)}
 .room-line b{color:var(--wine);font-weight:inherit}
+.corner-btn{position:absolute;top:22px;right:18px}
+@media (max-width:480px){.corner-btn{position:static;margin:0 0 6px auto;display:flex}}
+.code-box{font-size:24px;font-weight:700;text-align:center;letter-spacing:.04em;color:var(--wine);padding:16px;margin:6px 0 14px;border:1.5px dashed var(--rose);border-radius:14px;background:var(--surface-2);word-break:break-all}
+.room-btns{display:flex;gap:6px}
+.tour{position:fixed;inset:0;z-index:80;display:none}
+.tour.show{display:block}
+.tour-hole{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(40,18,30,.6),0 0 0 3px var(--rose);transition:left .3s,top .3s,width .3s,height .3s;pointer-events:none}
+.tour-card{position:fixed;width:min(330px,calc(100vw - 24px));background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.6);transition:left .3s,top .3s}
+.tour-card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:16px 16px 0 0;background:var(--grad-main)}
+.tour-top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+.tour-top button{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:13px;padding:4px;text-decoration:underline}
+.tour-card h3{margin:6px 0 4px;font-size:18px;color:var(--wine)}
+.tour-card p{margin:0 0 14px;font-size:15px;color:var(--ink)}
+.tour-actions{display:flex;align-items:center;gap:8px}
+.tour-dots{display:flex;gap:5px;margin-right:auto}
+.tour-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.tour-dots i.on{background:var(--rose);width:16px;border-radius:4px}
 .err{color:var(--danger);font-size:14px;min-height:1em}
 
 /* ---------- toast ---------- */
@@ -382,6 +399,7 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
       <button class="btn small pill" id="settingsBtn" type="button" title="Đổi tên hai người">
         Đổi tên
       </button>
+      <button class="btn small pill" id="helpBtn" type="button">Hướng dẫn</button>
       <button class="btn small pill theme-btn" id="themeBtn" type="button" title="Đổi giao diện sáng / tối">
         <span id="themeLbl">Tối</span>
       </button>
@@ -433,6 +451,17 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
 
 <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast"></div>
+<div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-top"><span id="tourStep"></span><button type="button" id="tourSkip">Bỏ qua</button></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="tour-actions"><span class="tour-dots" id="tourDots"></span>
+      <button class="btn small" type="button" id="tourBack">Trước</button>
+      <button class="btn small primary" type="button" id="tourNext">Tiếp</button></div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -620,44 +649,147 @@ function afterWelcome() {
   if (roomPending) roomModal();
   else if (state.me == null && state.mode !== "loading") whoModal(true);
 }
-function enterRoom(code, st) {
+function enterRoom(code, st, created) {
   room = code; ls.set("wl_room", room); roomPending = false;
   loadMe(); applyState(st); startPolling(); banner(null);
   closeModal();
-  if (state.me == null) whoModal(true);
+  if (created) roomCreatedModal(code);
+  else if (state.me == null) whoModal(true);
+  else maybeTour();
+}
+const ROOM_WORDS = ["hoa-hong", "may-hong", "sao-bang", "trang-non", "nang-mai", "gio-thu", "bien-xanh", "mua-ha", "keo-ngot", "la-thu"];
+function randomRoom() {
+  const w = ROOM_WORDS[Math.floor(Math.random() * ROOM_WORDS.length)];
+  return w + "-" + String(Math.floor(1000 + Math.random() * 9000));
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); toast("Đã sao chép"); } catch { toast("Không sao chép được, hãy chép tay"); }
+}
+function roomCreatedModal(code) {
+  openModal(m => {
+    modalLocked = true;
+    m.append(
+      h("h2", null, "Đã tạo phòng"),
+      h("p", { class: "lede" }, "Gửi mã này cho người kia"),
+      h("div", { class: "code-box" }, code),
+      h("div", { class: "modal-actions" },
+        h("button", { class: "btn", type: "button", onclick: () => copyText(code) }, "Sao chép mã"),
+        h("button", { class: "btn primary", type: "button", onclick: () => { closeModal(); if (state.me == null) whoModal(true); else maybeTour(); } }, "Tiếp tục")));
+  });
 }
 function roomModal() {
   openModal(m => {
     modalLocked = true;
-    const inp = h("input", { placeholder: "Ví dụ: khang-tien-hoahong", autocomplete: "off", autocapitalize: "off", spellcheck: "false", value: room });
+    const inp = h("input", { placeholder: "Nhập mã phòng", autocomplete: "off", autocapitalize: "off", spellcheck: "false", value: room });
     const err = h("div", { class: "err" });
     const actions = h("div", { class: "modal-actions" });
+    let busyRoom = false;
+    const create = async code => {
+      try { room = code; const st = await api("POST", { op: "init" }); enterRoom(code, st, true); }
+      catch { err.textContent = "Không kết nối được."; }
+    };
     const askCreate = code => {
-      err.textContent = "Chưa có phòng này.";
+      err.textContent = "Chưa có phòng với mã này.";
       actions.replaceChildren(
         h("button", { class: "btn", type: "button", onclick: () => { err.textContent = ""; actions.replaceChildren(goBtn); inp.focus(); } }, "Nhập lại"),
-        h("button", { class: "btn primary", type: "button", onclick: async () => {
-          try { room = code; const st = await api("POST", { op: "init" }); enterRoom(code, st); toast("Đã tạo phòng"); }
-          catch { err.textContent = "Không kết nối được."; }
-        } }, "Tạo phòng mới"));
+        h("button", { class: "btn primary", type: "button", onclick: () => create(code) }, "Tạo phòng này"));
     };
     const go = async () => {
+      if (busyRoom) return;
       const code = normRoom(inp.value);
       if (code.length < 6) { err.textContent = "Mã phòng cần ít nhất 6 ký tự."; return; }
-      err.textContent = "";
+      err.textContent = ""; busyRoom = true;
       try {
         room = code;
         const st = await api("GET");
         if (st.exists === false) askCreate(code); else enterRoom(code, st);
       } catch (e) { err.textContent = e.code === "room" ? "Mã không hợp lệ." : "Không kết nối được."; }
+      busyRoom = false;
+    };
+    const newRoom = async () => {
+      if (busyRoom) return;
+      let code = normRoom(inp.value);
+      if (!code) { code = randomRoom(); inp.value = code; }
+      if (code.length < 6) { err.textContent = "Mã phòng cần ít nhất 6 ký tự."; return; }
+      err.textContent = ""; busyRoom = true;
+      try {
+        room = code;
+        const st = await api("GET");
+        if (st.exists !== false) err.textContent = "Mã này đã có phòng. Bấm Vào, hoặc đổi mã khác.";
+        else await create(code);
+      } catch (e) { err.textContent = "Không kết nối được."; }
+      busyRoom = false;
     };
     const goBtn = h("button", { class: "btn primary", type: "button", onclick: go }, "Vào");
     actions.append(goBtn);
     inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
-    m.append(h("h2", null, "Mã phòng"), h("p", { class: "lede" }, "Hai người nhập cùng một mã"),
+    m.append(
+      h("button", { class: "btn small corner-btn", type: "button", onclick: newRoom }, "Tạo phòng mới"),
+      h("h2", null, "Mã phòng"),
+      h("p", { class: "lede" }, "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới."),
       h("div", { class: "field" }, inp), err, actions);
   });
 }
+
+/* ---------- guided tour ---------- */
+const tabEl = key => document.querySelector('.tab[data-tab="' + key + '"]');
+const TOUR = [
+  { sel: null, t: "Hướng dẫn nhanh", d: "Mỗi người có một danh sách riêng. Người kia chọn quà từ danh sách của bạn, và ngược lại." },
+  { sel: () => tabEl(state.me), t: "Danh sách của bạn", d: "Những món bạn muốn được tặng.", before: () => { state.tab = state.me; state.filter = "all"; render(); } },
+  { sel: () => $("#addBtn"), t: "Thêm món", d: "Ghi tên, giá, link. Chưa biết thêm gì thì bấm Gợi ý ngay bên cạnh." },
+  { sel: () => tabEl(partner()), t: "Danh sách người kia", d: "Bấm Chọn tặng ở một món rồi chọn dịp." },
+  { sel: () => tabEl("picks"), t: "Quà đã chọn", d: "Chỉ bạn thấy. Người kia chỉ biết đã có người chọn, không biết dịp nào." },
+  { sel: () => $("#settingsBtn"), t: "Đổi tên", d: "Đổi tên hai người, xem và sao chép mã phòng." },
+  { sel: () => $("#themeBtn"), t: "Sáng / Tối", d: "Đổi giao diện." },
+  { sel: () => $("#helpBtn"), t: "Xem lại hướng dẫn", d: "Bấm vào đây bất cứ lúc nào." },
+  { sel: () => $("#player"), t: "Nhạc nền", d: "Bật, tắt và chuyển bài." },
+];
+let tourIdx = 0;
+function maybeTour() { if (!ls.get("wl_tour") && state.me != null) setTimeout(startTour, 350); }
+function startTour() {
+  if (state.me == null) { whoModal(false); return; }
+  closeModal(); tourIdx = 0; $("#tour").classList.add("show"); showStep();
+}
+function endTour() { $("#tour").classList.remove("show"); ls.set("wl_tour", "1"); }
+function showStep() {
+  const st = TOUR[tourIdx];
+  if (st.before) st.before();
+  const el = st.sel ? st.sel() : null;
+  const hole = $("#tourHole"), card = $("#tourCard");
+  $("#tourStep").textContent = (tourIdx + 1) + " / " + TOUR.length;
+  $("#tourTitle").textContent = st.t;
+  $("#tourText").textContent = st.d;
+  $("#tourBack").style.visibility = tourIdx ? "visible" : "hidden";
+  $("#tourNext").textContent = tourIdx === TOUR.length - 1 ? "Xong" : "Tiếp";
+  $("#tourDots").replaceChildren(...TOUR.map((_, i) => h("i", { class: i === tourIdx ? "on" : "" })));
+  if (el && getComputedStyle(el).position !== "fixed") el.scrollIntoView({ block: "center", behavior: "auto" });
+  requestAnimationFrame(() => place(el, hole, card));
+}
+function place(el, hole, card) {
+  const W = innerWidth, H = innerHeight, cw = card.offsetWidth, ch = card.offsetHeight, pad = 8;
+  if (!el || !el.getClientRects().length) {
+    Object.assign(hole.style, { left: W / 2 + "px", top: H / 2 + "px", width: "0px", height: "0px" });
+    Object.assign(card.style, { left: (W - cw) / 2 + "px", top: (H - ch) / 2 + "px" });
+    return;
+  }
+  const r = el.getBoundingClientRect();
+  Object.assign(hole.style, { left: r.left - pad + "px", top: r.top - pad + "px", width: r.width + pad * 2 + "px", height: r.height + pad * 2 + "px" });
+  let top = r.bottom + pad + 14;
+  if (top + ch > H - 12) top = r.top - pad - 14 - ch;
+  if (top < 12) top = Math.min(H - ch - 12, r.bottom + pad + 14);
+  const left = Math.max(12, Math.min(W - cw - 12, r.left + r.width / 2 - cw / 2));
+  Object.assign(card.style, { left: left + "px", top: Math.max(12, top) + "px" });
+}
+$("#tourNext").addEventListener("click", () => { if (tourIdx >= TOUR.length - 1) endTour(); else { tourIdx++; showStep(); } });
+$("#tourBack").addEventListener("click", () => { if (tourIdx > 0) { tourIdx--; showStep(); } });
+$("#tourSkip").addEventListener("click", endTour);
+addEventListener("resize", () => { if ($("#tour").classList.contains("show")) showStep(); });
+document.addEventListener("keydown", e => {
+  if (!$("#tour").classList.contains("show")) return;
+  if (e.key === "Escape") endTour();
+  else if (e.key === "ArrowRight") $("#tourNext").click();
+  else if (e.key === "ArrowLeft") $("#tourBack").click();
+});
 
 function startLocal(msg) {
   state.mode = "local"; room = room || "local"; loadMe(); localLoad(); state.loaded = true;
@@ -720,7 +852,7 @@ function whoModal(force) {
       h("p", { class: "lede" }, "Chọn tên của bạn"),
       h("div", { class: "who-grid" }, [0, 1].map(i =>
         h("button", { type: "button", class: state.me === i ? "on" : "", onclick: () => {
-          state.me = i; ls.set(meKey(), String(i)); state.tab = i; closeModal(); render();
+          state.me = i; ls.set(meKey(), String(i)); state.tab = i; closeModal(); render(); maybeTour();
         } }, nameOf(i)))),
       h("div", { class: "modal-actions" },
         h("button", { class: "btn small", type: "button", onclick: () => settingsModal(force) }, "Đổi tên"))
@@ -743,7 +875,9 @@ function settingsModal(fromWho) {
       err,
       state.mode === "remote" && room ? h("div", { class: "room-line" },
         h("span", null, "Phòng: ", h("b", null, room)),
-        h("button", { class: "btn small danger", type: "button", onclick: () => { ls.set("wl_room", ""); location.reload(); } }, "Rời phòng")) : null,
+        h("span", { class: "room-btns" },
+          h("button", { class: "btn small", type: "button", onclick: () => copyText(room) }, "Sao chép"),
+          h("button", { class: "btn small danger", type: "button", onclick: () => { ls.set("wl_room", ""); location.reload(); } }, "Rời phòng"))) : null,
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: () => fromWho ? whoModal(state.me == null) : closeModal() }, "Thôi"),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
@@ -995,7 +1129,7 @@ function renderList(owner) {
     [["all", "Tất cả"], ["open", "Chưa ai chọn"], ["taken", mine ? "Đã có người để ý" : "Đã chọn / đã tặng"]].map(([k, l]) => h("option", { value: k, selected: state.filter === k }, l)));
   const controls = h("div", { class: "controls" }, sortSel, filSel,
     mine && !state.readOnly ? h("button", { class: "btn", type: "button", onclick: () => ideasModal() }, "Gợi ý") : null,
-    mine && !state.readOnly ? h("button", { class: "btn primary", type: "button", onclick: () => itemModal(null) }, "Thêm món") : null);
+    mine && !state.readOnly ? h("button", { class: "btn primary", id: "addBtn", type: "button", onclick: () => itemModal(null) }, "Thêm món") : null);
 
   const grid = h("div", { class: "grid" });
   if (!state.loaded) grid.append(h("div", { class: "empty" }, h("div", { class: "big" }, "Đang tải…")));
@@ -1085,7 +1219,7 @@ function render() {
 
   if (state.tab == null) state.tab = state.me != null ? state.me : 0;
   const tabs = $("#tabs");
-  const mk = (key, label, extra, count) => h("button", { class: "tab" + (state.tab === key ? " active" : ""), type: "button", role: "tab", "aria-selected": state.tab === key ? "true" : "false",
+  const mk = (key, label, extra, count) => h("button", { class: "tab" + (state.tab === key ? " active" : ""), "data-tab": String(key), type: "button", role: "tab", "aria-selected": state.tab === key ? "true" : "false",
     onclick: () => { state.tab = key; state.filter = "all"; render(); } }, label, extra ? h("span", { class: "tag" }, extra) : null, count ? h("span", { class: "count" }, count) : null);
   const myPicks = state.me == null ? 0 : state.items.filter(x => x.pickedBy === state.me && x.status === "picked").length;
   tabs.replaceChildren(
@@ -1327,6 +1461,7 @@ document.addEventListener("keydown", firstTouch, true);
 $("#today").textContent = new Date().toLocaleDateString("vi-VN", { day: "numeric", month: "long", year: "numeric" });
 $("#whoBtn").addEventListener("click", () => whoModal(false));
 $("#settingsBtn").addEventListener("click", () => settingsModal(false));
+$("#helpBtn").addEventListener("click", startTour);
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
   $("#themeLbl").textContent = t === "dark" ? "Sáng" : "Tối";
