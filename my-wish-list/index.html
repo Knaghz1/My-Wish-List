@@ -681,18 +681,34 @@ function roomModal() {
   openModal(m => {
     modalLocked = true;
     const inp = h("input", { placeholder: "Nhập mã phòng", autocomplete: "off", autocapitalize: "off", spellcheck: "false", value: room });
+    const title = h("h2", null, "Mã phòng");
+    const lede = h("p", { class: "lede" }, "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới.");
     const err = h("div", { class: "err" });
     const actions = h("div", { class: "modal-actions" });
-    let busyRoom = false;
+    let busyRoom = false, mode = "join";
     const create = async code => {
       try { room = code; const st = await api("POST", { op: "init" }); enterRoom(code, st, true); }
       catch { err.textContent = "Không kết nối được."; }
     };
-    const askCreate = code => {
-      err.textContent = "Chưa có phòng với mã này.";
+    // join mode: one "Vào" button
+    const joinMode = () => {
+      mode = "join"; err.textContent = "";
+      title.textContent = "Mã phòng";
+      lede.textContent = "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới.";
+      corner.style.visibility = "visible";
+      actions.replaceChildren(goBtn);
+    };
+    // create mode: suggested code is only filled in; nothing is created until "Tạo phòng" is pressed
+    const createMode = () => {
+      mode = "create"; err.textContent = "";
+      if (!normRoom(inp.value)) inp.value = randomRoom();
+      title.textContent = "Tạo phòng mới";
+      lede.textContent = "Đây là mã gợi ý. Sửa nếu muốn, rồi bấm Tạo phòng.";
+      corner.style.visibility = "hidden";
       actions.replaceChildren(
-        h("button", { class: "btn", type: "button", onclick: () => { err.textContent = ""; actions.replaceChildren(goBtn); inp.focus(); } }, "Nhập lại"),
-        h("button", { class: "btn primary", type: "button", onclick: () => create(code) }, "Tạo phòng này"));
+        h("button", { class: "btn", type: "button", onclick: joinMode }, "Quay lại"),
+        createBtn);
+      inp.focus(); inp.select();
     };
     const go = async () => {
       if (busyRoom) return;
@@ -702,32 +718,32 @@ function roomModal() {
       try {
         room = code;
         const st = await api("GET");
-        if (st.exists === false) askCreate(code); else enterRoom(code, st);
+        if (st.exists === false) {
+          err.textContent = "Chưa có phòng với mã này. Kiểm tra lại, hoặc bấm Tạo phòng mới.";
+        } else enterRoom(code, st);
       } catch (e) { err.textContent = e.code === "room" ? "Mã không hợp lệ." : "Không kết nối được."; }
       busyRoom = false;
     };
-    const newRoom = async () => {
+    const confirmCreate = async () => {
       if (busyRoom) return;
-      let code = normRoom(inp.value);
-      if (!code) { code = randomRoom(); inp.value = code; }
+      const code = normRoom(inp.value);
       if (code.length < 6) { err.textContent = "Mã phòng cần ít nhất 6 ký tự."; return; }
-      err.textContent = ""; busyRoom = true;
+      err.textContent = ""; busyRoom = true; createBtn.disabled = true; createBtn.textContent = "Đang tạo…";
       try {
         room = code;
         const st = await api("GET");
-        if (st.exists !== false) err.textContent = "Mã này đã có phòng. Bấm Vào, hoặc đổi mã khác.";
+        if (st.exists !== false) err.textContent = "Mã này đã có phòng. Đổi mã khác, hoặc quay lại để vào phòng.";
         else await create(code);
-      } catch (e) { err.textContent = "Không kết nối được."; }
+      } catch { err.textContent = "Không kết nối được."; }
       busyRoom = false;
+      if (createBtn.isConnected) { createBtn.disabled = false; createBtn.textContent = "Tạo phòng"; }
     };
     const goBtn = h("button", { class: "btn primary", type: "button", onclick: go }, "Vào");
-    actions.append(goBtn);
-    inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
-    m.append(
-      h("button", { class: "btn small corner-btn", type: "button", onclick: newRoom }, "Tạo phòng mới"),
-      h("h2", null, "Mã phòng"),
-      h("p", { class: "lede" }, "Nhập mã để vào phòng. Chưa có mã thì bấm Tạo phòng mới."),
-      h("div", { class: "field" }, inp), err, actions);
+    const createBtn = h("button", { class: "btn primary", type: "button", onclick: confirmCreate }, "Tạo phòng");
+    const corner = h("button", { class: "btn small corner-btn", type: "button", onclick: createMode }, "Tạo phòng mới");
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") (mode === "create" ? confirmCreate : go)(); });
+    m.append(corner, title, lede, h("div", { class: "field" }, inp), err, actions);
+    joinMode();
   });
 }
 
@@ -880,14 +896,31 @@ function settingsModal(fromWho) {
           h("button", { class: "btn small danger", type: "button", onclick: () => { ls.set("wl_room", ""); location.reload(); } }, "Rời phòng"))) : null,
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: () => fromWho ? whoModal(state.me == null) : closeModal() }, "Thôi"),
-        h("button", { class: "btn primary", type: "button", onclick: async () => {
+        saver("Lưu", async () => {
           const n = [a.value.trim(), b.value.trim()];
-          if (!n[0] || !n[1]) { err.textContent = "Nhập đủ hai tên."; return; }
+          if (!n[0] || !n[1]) { err.textContent = "Nhập đủ hai tên."; return false; }
           const ok = await Store.saveNames(n);
           if (ok) { state.names = n; render(); if (fromWho && state.me == null) whoModal(true); else closeModal(); toast("Đã lưu tên"); }
-        } }, "Lưu"))
+          return ok;
+        }).btn)
     );
   });
+}
+
+/* ---------- one save at a time ---------- */
+// Locks a modal's save button while the request runs, so a second click can't create a duplicate.
+function saver(label, run) {
+  let running = false;
+  const btn = h("button", { class: "btn primary", type: "button" }, label);
+  const go = async () => {
+    if (running) return;
+    running = true; btn.disabled = true; btn.textContent = "Đang lưu…";
+    let ok = false;
+    try { ok = await run(); } catch { ok = false; }
+    if (!ok && btn.isConnected) { running = false; btn.disabled = false; btn.textContent = label; }
+  };
+  btn.addEventListener("click", go);
+  return { btn, go };
 }
 
 /* ---------- add / edit item ---------- */
@@ -918,20 +951,25 @@ function itemModal(existing, prefill) {
     const drawHearts = () => { hp.replaceChildren(...[1, 2, 3].map(n => h("button", { type: "button", class: n === hearts ? "on" : "", onclick: () => { hearts = n; drawHearts(); } }, LEVELS[n]))); };
     drawHearts();
     const err = h("div", { class: "err" });
-    const save = async () => {
+    // id fixed when the modal opens: even a repeated request writes the same item
+    const base = existing || {
+      id: uid(), owner: state.me, createdAt: Date.now(), status: "open",
+      pickedBy: null, occasion: null, occasionDate: null, pickNote: null,
+    };
+    const saveBtn = saver(existing ? "Lưu" : "Thêm", async () => {
+      err.textContent = "";
       const t = title.value.trim();
-      if (!t) { err.textContent = "Nhập tên món."; title.focus(); return; }
+      if (!t) { err.textContent = "Nhập tên món."; title.focus(); return false; }
       const p = price.value.trim() ? parsePrice(price.value) : null;
-      if (price.value.trim() && p == null) { err.textContent = "Giá chưa hợp lệ."; return; }
+      if (price.value.trim() && p == null) { err.textContent = "Giá chưa hợp lệ."; return false; }
       const l = link.value.trim();
-      if (l && !safeUrl(l)) { err.textContent = "Link chưa hợp lệ."; return; }
-      const item = Object.assign({}, existing || {
-        id: uid(), owner: state.me, createdAt: Date.now(), status: "open",
-        pickedBy: null, occasion: null, occasionDate: null, pickNote: null,
-      }, { title: t, price: p, link: l ? safeUrl(l) : "", category: cat.value, note: note.value.trim(), hearts });
+      if (l && !safeUrl(l)) { err.textContent = "Link chưa hợp lệ."; return false; }
+      const item = Object.assign({}, base, { title: t, price: p, link: l ? safeUrl(l) : "", category: cat.value, note: note.value.trim(), hearts });
       const ok = await Store.put(item);
       if (ok) { closeModal(); toast(existing ? "Đã lưu" : "Đã thêm"); }
-    };
+      return ok;
+    });
+    const save = saveBtn.go;
     m.append(
       xBtn(),
       h("h2", null, existing ? "Sửa món" : "Thêm món"),
@@ -946,7 +984,7 @@ function itemModal(existing, prefill) {
       err,
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: closeModal }, "Huỷ"),
-        h("button", { class: "btn primary", type: "button", onclick: save }, existing ? "Lưu" : "Thêm"))
+        saveBtn.btn)
     );
     m.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); save(); } });
   });
@@ -1024,12 +1062,13 @@ function pickModal(it) {
       err,
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: closeModal }, "Huỷ"),
-        h("button", { class: "btn primary", type: "button", onclick: async () => {
+        saver(it.status === "picked" ? "Lưu" : "Chọn", async () => {
           const o = occ === "__custom" ? custom.value.trim() : occ;
-          if (!o) { err.textContent = "Nhập tên dịp."; return; }
+          if (!o) { err.textContent = "Nhập tên dịp."; return false; }
           const ok = await Store.patch(it.id, { status: "picked", pickedBy: state.me, occasion: o, occasionDate: date.value || null, pickNote: note.value.trim() || null });
           if (ok) { closeModal(); toast("Đã chọn"); }
-        } }, it.status === "picked" ? "Lưu" : "Chọn"))
+          return ok;
+        }).btn)
     );
   });
 }

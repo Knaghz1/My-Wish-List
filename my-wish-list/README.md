@@ -18,6 +18,11 @@ Mỗi cặp đôi dùng một **mã phòng** riêng, dài ít nhất 6 ký tự,
 - Mỗi máy nhập mã một lần và trình duyệt sẽ nhớ luôn. Muốn đổi sang phòng khác thì vào **Đổi tên → Rời phòng**.
 - Các phòng hoàn toàn tách biệt. Mã phòng cũng chính là mật khẩu, nên hãy đặt mã khó đoán và chỉ gửi riêng cho người kia.
 
+## Tính năng
+
+- **Ngày yêu nhau:** đặt một lần, cả phòng cùng thấy. Trang tự đếm số ngày và báo mốc sắp tới (100 ngày, kỷ niệm năm). Bấm vào ô đếm ngày để sửa.
+- **Nhạc nền:** có 3 bản piano tự sáng tác. Trong danh sách nhạc, có thể dán link YouTube để thêm bài; danh sách bài lưu chung cho cả phòng, tối đa 30 bài. Bài YouTube phát bằng trình phát nhúng chính thức của YouTube. Video riêng tư, đã xoá hoặc bị chặn nhúng sẽ không thêm được.
+
 ## Ghi chú
 
 - Mở trực tiếp file `index.html` trên máy thì trang chỉ lưu dữ liệu trên trình duyệt đó.

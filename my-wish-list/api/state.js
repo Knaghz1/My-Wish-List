@@ -22,7 +22,6 @@ async function call(path, body) {
   if (!r.ok || (j && j.error)) throw new Error((j && j.error) || "redis " + r.status);
   return j;
 }
-const redis = async (...cmd) => (await call("", cmd)).result;
 const pipeline = async cmds => (await call("/pipeline", cmds)).map(x => {
   if (x.error) throw new Error(x.error);
   return x.result;
@@ -59,8 +58,7 @@ function roomKeys(req) {
   return { items: `wl:${h}:items`, cfg: `wl:${h}:config`, ver: `wl:${h}:ver` };
 }
 
-async function readState(K) {
-  const [flat, cfg, ver] = await pipeline([["HGETALL", K.items], ["GET", K.cfg], ["GET", K.ver]]);
+function parseState(flat, cfg, ver) {
   const items = [];
   for (let i = 0; i + 1 < (flat || []).length; i += 2) {
     try { items.push(Object.assign(JSON.parse(flat[i + 1]), { id: flat[i] })); } catch {}
@@ -69,6 +67,12 @@ async function readState(K) {
   try { config = cfg ? JSON.parse(cfg) : null; } catch {}
   return { exists: true, ver: Number(ver) || 0, items, config };
 }
+// One round trip: the writes, the version bump and the fresh state.
+async function writeAndRead(K, cmds) {
+  const out = await pipeline([...cmds, ["INCR", K.ver], ["HGETALL", K.items], ["GET", K.cfg], ["GET", K.ver]]);
+  const n = out.length;
+  return parseState(out[n - 3], out[n - 2], out[n - 1]);
+}
 
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
@@ -76,44 +80,51 @@ module.exports = async (req, res) => {
   const K = roomKeys(req);
   if (!K) return res.status(401).json({ error: "room" });
   try {
-    const exists = (await redis("EXISTS", K.ver)) === 1;
-    if (req.method === "GET") return res.status(200).json(exists ? await readState(K) : { exists: false });
+    if (req.method === "GET") {
+      const [ex, flat, cfg, ver] = await pipeline([["EXISTS", K.ver], ["HGETALL", K.items], ["GET", K.cfg], ["GET", K.ver]]);
+      return res.status(200).json(ex === 1 ? parseState(flat, cfg, ver) : { exists: false });
+    }
     if (req.method !== "POST") return res.status(405).json({ error: "method" });
 
     let b = req.body || {};
     if (typeof b === "string") { try { b = JSON.parse(b); } catch { b = {}; } }
 
+    // one round trip for everything the checks need
+    const needItem = (b.op === "patch" || b.op === "put") && validId(b.op === "put" ? (b.item || {}).id : b.id);
+    const [ex, count, current] = await pipeline([
+      ["EXISTS", K.ver], ["HLEN", K.items],
+      needItem ? ["HGET", K.items, b.op === "put" ? b.item.id : b.id] : ["GET", "wl:none"],
+    ]);
+    const exists = ex === 1;
+
     if (b.op === "init") {
-      if (!exists) await pipeline([["SET", K.cfg, JSON.stringify({ names: ["Anh", "Em"] })], ["SET", K.ver, "1"]]);
-      return res.status(200).json(await readState(K));
+      if (exists) return res.status(200).json(await writeAndRead(K, []));
+      return res.status(200).json(await writeAndRead(K, [["SET", K.cfg, JSON.stringify({ names: ["Anh", "Em"] })]]));
     }
     if (!exists) return res.status(404).json({ error: "no_room" });
 
+    let cmds;
     if (b.op === "put") {
       const it = b.item || {};
       if (!validId(it.id)) return res.status(400).json({ error: "id" });
-      const exists = await redis("HEXISTS", K.items, it.id);
-      if (!exists && (await redis("HLEN", K.items)) >= MAX_ITEMS) return res.status(400).json({ error: "full" });
-      await redis("HSET", K.items, it.id, JSON.stringify(clean(it)));
+      if (!current && count >= MAX_ITEMS) return res.status(400).json({ error: "full" });
+      cmds = [["HSET", K.items, it.id, JSON.stringify(clean(it))]];
     } else if (b.op === "patch") {
       if (!validId(b.id)) return res.status(400).json({ error: "id" });
-      const raw = await redis("HGET", K.items, b.id);
-      if (!raw) return res.status(404).json({ error: "not_found" });
-      const merged = clean(Object.assign(JSON.parse(raw), b.patch || {}));
-      await redis("HSET", K.items, b.id, JSON.stringify(merged));
+      if (!current) return res.status(404).json({ error: "not_found" });
+      cmds = [["HSET", K.items, b.id, JSON.stringify(clean(Object.assign(JSON.parse(current), b.patch || {})))]];
     } else if (b.op === "del") {
       if (!validId(b.id)) return res.status(400).json({ error: "id" });
-      await redis("HDEL", K.items, b.id);
+      cmds = [["HDEL", K.items, b.id]];
     } else if (b.op === "names") {
       const n = Array.isArray(b.names) ? b.names : [];
       const names = [str(n[0], 24), str(n[1], 24)];
       if (!names[0] || !names[1]) return res.status(400).json({ error: "names" });
-      await redis("SET", K.cfg, JSON.stringify({ names }));
+      cmds = [["SET", K.cfg, JSON.stringify({ names })]];
     } else {
       return res.status(400).json({ error: "op" });
     }
-    await redis("INCR", K.ver);
-    return res.status(200).json(await readState(K));
+    return res.status(200).json(await writeAndRead(K, cmds));
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "server" });
