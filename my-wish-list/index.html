@@ -304,6 +304,8 @@ a{color:var(--rose-deep)}
 .modal.welcome .w-go{height:48px;padding:0 34px;font-size:16px}
 em{font-style:normal;font-weight:inherit}
 .masthead .sub b,.lead b,.stat b,.next b,.status-line b,.occasion-head .when b,.total b,.who-btn b,.hint b{font-weight:inherit}
+.room-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;margin:4px 0 8px;border:1px dashed var(--line);border-radius:12px;font-size:14px;color:var(--ink-soft)}
+.room-line b{color:var(--wine);font-weight:inherit}
 .err{color:var(--danger);font-size:14px;min-height:1em}
 
 /* ---------- toast ---------- */
@@ -512,7 +514,7 @@ const OCCASIONS = ["Sinh nhật", "Kỷ niệm", "Valentine", "8/3", "20/10", "G
 
 /* ============================ state ============================ */
 const state = {
-  me: (() => { const v = ls.get("wl_me"); return v === "0" ? 0 : v === "1" ? 1 : null; })(),
+  me: null,
   names: ["Anh", "Em"],
   items: [],
   tab: null,          // 0, 1, or "picks"
@@ -536,14 +538,17 @@ function localLoad() {
 function localSave() { ls.set(LOCAL_ITEMS, JSON.stringify(state.items)); }
 
 const API = "/api/state";
-let pass = ls.get("wl_pass") || "";
+let room = ls.get("wl_room") || "";
+const normRoom = v => String(v || "").trim().toLowerCase().replace(/\s+/g, " ");
+const meKey = () => "wl_me:" + room;
+function loadMe() { const v = ls.get(meKey()); state.me = v === "0" ? 0 : v === "1" ? 1 : null; if (state.me != null) state.tab = state.me; }
 let pollT = null, busy = 0, lastVer = null;
 async function api(method, body) {
   let r;
   try {
-    r = await fetch(API, { method, cache: "no-store", headers: { "Content-Type": "application/json", "x-wl-key": pass }, body: body ? JSON.stringify(body) : undefined });
+    r = await fetch(API, { method, cache: "no-store", headers: { "Content-Type": "application/json", "x-wl-room": encodeURIComponent(room) }, body: body ? JSON.stringify(body) : undefined });
   } catch { const e = new Error("network"); e.code = "network"; throw e; }
-  if (r.status === 401) { const e = new Error("passcode"); e.code = "passcode"; throw e; }
+  if (r.status === 401) { const e = new Error("room"); e.code = "room"; throw e; }
   if (r.status === 503) { const e = new Error("no_db"); e.code = "no_db"; throw e; }
   if (r.status === 404) { const e = new Error("no_api"); e.code = "no_api"; throw e; }
   if (!r.ok) { const e = new Error("http"); e.code = "http"; throw e; }
@@ -559,7 +564,7 @@ function applyState(st) {
 async function pull() {
   if (busy || state.mode !== "remote") return;
   try { const st = await api("GET"); banner(null); if (st.ver !== lastVer) applyState(st); }
-  catch (e) { if (e.code === "passcode") needPass(); else banner("Mất kết nối, đang thử lại…"); }
+  catch (e) { if (e.code === "room") needRoom(); else banner("Mất kết nối, đang thử lại…"); }
 }
 function startPolling() {
   clearInterval(pollT);
@@ -578,7 +583,7 @@ async function send(body, optimistic) {
   } catch (e) {
     busy--;
     state.items = JSON.parse(snapshot); render();
-    if (e.code === "passcode") needPass(); else toast("Không lưu được, thử lại.");
+    if (e.code === "room") needRoom(); else toast("Không lưu được, thử lại.");
     return false;
   }
 }
@@ -605,49 +610,73 @@ const Store = {
   },
 };
 
-let welcomeOpen = false, passPending = false;
-function needPass() {
-  passPending = true;
-  if (!welcomeOpen) passModal();
+let welcomeOpen = false, roomPending = false;
+function needRoom() {
+  roomPending = true; clearInterval(pollT);
+  if (!welcomeOpen) roomModal();
 }
 function afterWelcome() {
   welcomeOpen = false;
-  if (passPending) passModal();
-  else if (state.me == null) whoModal(true);
+  if (roomPending) roomModal();
+  else if (state.me == null && state.mode !== "loading") whoModal(true);
 }
-function passModal() {
+function enterRoom(code, st) {
+  room = code; ls.set("wl_room", room); roomPending = false;
+  loadMe(); applyState(st); startPolling(); banner(null);
+  closeModal();
+  if (state.me == null) whoModal(true);
+}
+function roomModal() {
   openModal(m => {
     modalLocked = true;
-    const inp = h("input", { type: "password", placeholder: "Mã truy cập", autocomplete: "current-password" });
+    const inp = h("input", { placeholder: "Ví dụ: khang-tien-hoahong", autocomplete: "off", autocapitalize: "off", spellcheck: "false", value: room });
     const err = h("div", { class: "err" });
-    const go = async () => {
-      pass = inp.value.trim(); if (!pass) return;
-      try {
-        const st = await api("GET");
-        ls.set("wl_pass", pass); passPending = false;
-        applyState(st); startPolling(); banner(null);
-        closeModal();
-        if (state.me == null) whoModal(true);
-      } catch (e) { err.textContent = e.code === "passcode" ? "Sai mã." : "Không kết nối được."; }
+    const actions = h("div", { class: "modal-actions" });
+    const askCreate = code => {
+      err.textContent = "Chưa có phòng này.";
+      actions.replaceChildren(
+        h("button", { class: "btn", type: "button", onclick: () => { err.textContent = ""; actions.replaceChildren(goBtn); inp.focus(); } }, "Nhập lại"),
+        h("button", { class: "btn primary", type: "button", onclick: async () => {
+          try { room = code; const st = await api("POST", { op: "init" }); enterRoom(code, st); toast("Đã tạo phòng"); }
+          catch { err.textContent = "Không kết nối được."; }
+        } }, "Tạo phòng mới"));
     };
+    const go = async () => {
+      const code = normRoom(inp.value);
+      if (code.length < 6) { err.textContent = "Mã phòng cần ít nhất 6 ký tự."; return; }
+      err.textContent = "";
+      try {
+        room = code;
+        const st = await api("GET");
+        if (st.exists === false) askCreate(code); else enterRoom(code, st);
+      } catch (e) { err.textContent = e.code === "room" ? "Mã không hợp lệ." : "Không kết nối được."; }
+    };
+    const goBtn = h("button", { class: "btn primary", type: "button", onclick: go }, "Vào");
+    actions.append(goBtn);
     inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
-    m.append(h("h2", null, "Nhập mã"), h("div", { style: "height:8px" }),
-      h("div", { class: "field" }, inp), err,
-      h("div", { class: "modal-actions" }, h("button", { class: "btn primary", type: "button", onclick: go }, "Mở")));
+    m.append(h("h2", null, "Mã phòng"), h("p", { class: "lede" }, "Hai người nhập cùng một mã"),
+      h("div", { class: "field" }, inp), err, actions);
   });
 }
 
 function startLocal(msg) {
-  state.mode = "local"; localLoad(); state.loaded = true;
+  state.mode = "local"; room = room || "local"; loadMe(); localLoad(); state.loaded = true;
+  if (state.me == null && !welcomeOpen) whoModal(true);
   banner(msg || "Đang lưu trên máy này.");
   render();
 }
 async function connect() {
   if (location.protocol === "file:") { startLocal(); return; }
   state.mode = "remote";
-  try { const st = await api("GET"); applyState(st); startPolling(); }
-  catch (e) {
-    if (e.code === "passcode") { needPass(); return; }
+  if (!room) { needRoom(); return; }
+  loadMe();
+  try {
+    const st = await api("GET");
+    if (st.exists === false) { needRoom(); return; }
+    applyState(st); startPolling();
+    if (state.me == null && !welcomeOpen) whoModal(true);
+  } catch (e) {
+    if (e.code === "room") { needRoom(); return; }
     if (e.code === "no_db") { startLocal("Chưa kết nối database. Đang lưu trên máy này."); return; }
     if (e.code === "no_api") { startLocal(); return; }
     banner("Chưa kết nối được, đang thử lại…"); startPolling();
@@ -691,7 +720,7 @@ function whoModal(force) {
       h("p", { class: "lede" }, "Chọn tên của bạn"),
       h("div", { class: "who-grid" }, [0, 1].map(i =>
         h("button", { type: "button", class: state.me === i ? "on" : "", onclick: () => {
-          state.me = i; ls.set("wl_me", String(i)); state.tab = i; closeModal(); render();
+          state.me = i; ls.set(meKey(), String(i)); state.tab = i; closeModal(); render();
         } }, nameOf(i)))),
       h("div", { class: "modal-actions" },
         h("button", { class: "btn small", type: "button", onclick: () => settingsModal(force) }, "Đổi tên"))
@@ -712,6 +741,9 @@ function settingsModal(fromWho) {
         h("div", { class: "field" }, h("label", null, "Người 1"), a),
         h("div", { class: "field" }, h("label", null, "Người 2"), b)),
       err,
+      state.mode === "remote" && room ? h("div", { class: "room-line" },
+        h("span", null, "Phòng: ", h("b", null, room)),
+        h("button", { class: "btn small danger", type: "button", onclick: () => { ls.set("wl_room", ""); location.reload(); } }, "Rời phòng")) : null,
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: () => fromWho ? whoModal(state.me == null) : closeModal() }, "Thôi"),
         h("button", { class: "btn primary", type: "button", onclick: async () => {
