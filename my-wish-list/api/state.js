@@ -47,6 +47,30 @@ function clean(it) {
     giftedAt: Number(it.giftedAt) || null,
   };
 }
+const MAX_SONGS = 30;
+function validDate(d) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const t = Date.parse(d + "T00:00:00Z");
+  return Number.isFinite(t) && t > Date.parse("1950-01-01") && t < Date.now() + 2 * 86400000;
+}
+// accepts youtube.com/watch?v=, youtu.be/, /shorts/, /embed/, /live/, music.youtube.com, or a bare 11-char id
+function youtubeId(url) {
+  const u = String(url || "").trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(u)) return u;
+  const m = u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+  return m ? m[1] : null;
+}
+// title via YouTube oEmbed; null when the video is private, removed or not embeddable
+async function youtubeInfo(id) {
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 4000);
+  try {
+    const r = await fetch("https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + id), { signal: ctl.signal });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return { title: String(j.title || "Bài YouTube").slice(0, 100) };
+  } catch { return { title: "Bài YouTube" }; }
+  finally { clearTimeout(t); }
+}
 const validId = id => typeof id === "string" && /^[a-z0-9]{6,40}$/i.test(id);
 
 function roomKeys(req) {
@@ -91,11 +115,15 @@ module.exports = async (req, res) => {
 
     // one round trip for everything the checks need
     const needItem = (b.op === "patch" || b.op === "put") && validId(b.op === "put" ? (b.item || {}).id : b.id);
-    const [ex, count, current] = await pipeline([
+    const [ex, count, current, cfgRaw] = await pipeline([
       ["EXISTS", K.ver], ["HLEN", K.items],
       needItem ? ["HGET", K.items, b.op === "put" ? b.item.id : b.id] : ["GET", "wl:none"],
+      ["GET", K.cfg],
     ]);
     const exists = ex === 1;
+    let cfg = {};
+    try { cfg = cfgRaw ? JSON.parse(cfgRaw) || {} : {}; } catch { cfg = {}; }
+    const saveCfg = patch => [["SET", K.cfg, JSON.stringify(Object.assign({}, cfg, patch))]];
 
     if (b.op === "init") {
       if (exists) return res.status(200).json(await writeAndRead(K, []));
@@ -120,7 +148,23 @@ module.exports = async (req, res) => {
       const n = Array.isArray(b.names) ? b.names : [];
       const names = [str(n[0], 24), str(n[1], 24)];
       if (!names[0] || !names[1]) return res.status(400).json({ error: "names" });
-      cmds = [["SET", K.cfg, JSON.stringify({ names })]];
+      cmds = saveCfg({ names });
+    } else if (b.op === "date") {
+      const d = b.date == null || b.date === "" ? null : String(b.date);
+      if (d !== null && !validDate(d)) return res.status(400).json({ error: "date" });
+      cmds = saveCfg({ startDate: d });
+    } else if (b.op === "song_add") {
+      const id = youtubeId(b.url);
+      if (!id) return res.status(400).json({ error: "song_url" });
+      const songs = Array.isArray(cfg.songs) ? cfg.songs : [];
+      if (songs.some(x => x.id === id)) return res.status(200).json(await writeAndRead(K, []));
+      if (songs.length >= MAX_SONGS) return res.status(400).json({ error: "songs_full" });
+      const info = await youtubeInfo(id);
+      if (!info) return res.status(400).json({ error: "song_unavailable" });
+      cmds = saveCfg({ songs: [...songs, { id, title: info.title }] });
+    } else if (b.op === "song_del") {
+      const songs = Array.isArray(cfg.songs) ? cfg.songs : [];
+      cmds = saveCfg({ songs: songs.filter(x => x.id !== String(b.id)) });
     } else {
       return res.status(400).json({ error: "op" });
     }

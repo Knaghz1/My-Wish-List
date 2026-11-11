@@ -323,6 +323,28 @@ em{font-style:normal;font-weight:inherit}
 .tour-dots{display:flex;gap:5px;margin-right:auto}
 .tour-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
 .tour-dots i.on{background:var(--rose);width:16px;border-radius:4px}
+.together{display:inline-flex;flex-direction:column;align-items:center;gap:2px;margin-top:16px;padding:10px 22px;border-radius:16px;border:1.5px solid var(--line);background:var(--grad-soft);cursor:pointer;color:var(--ink);transition:border-color .2s,transform .15s}
+.together:hover{border-color:var(--rose);transform:translateY(-1px)}
+.together .tg-main{font-size:20px;font-weight:700;color:var(--wine)}
+.together .tg-sub{font-size:13.5px;color:var(--ink-soft)}
+.together.empty{padding:9px 18px;border-style:dashed}
+.together.empty .tg-main{font-size:15px;font-weight:600;color:var(--rose-deep)}
+.p-video{display:none;padding:12px 14px 0}
+.p-video.show{display:block}
+.p-track{padding:0}
+.p-video iframe{display:block;width:100%;height:200px;border:0;border-radius:12px;background:#000}
+.p-track{display:flex;align-items:center;gap:4px;border-radius:12px}
+.p-track:hover{background:var(--surface-2)}
+.p-track-main{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;padding:7px 10px;border:none;background:transparent;cursor:pointer;color:inherit}
+.p-tx{min-width:0;flex:1}
+.p-tx .tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-del{border:none;background:none;color:var(--ink-soft);font-size:12.5px;cursor:pointer;padding:6px 10px;border-radius:8px}
+.p-del:hover{color:var(--danger);background:var(--surface)}
+.p-add{display:flex;gap:6px;padding:8px 6px 4px;border-top:1px dashed var(--line);margin-top:4px}
+.p-add input{flex:1;min-width:0;height:36px;border:1.5px solid var(--field-line);border-radius:10px;padding:0 10px;background:var(--surface);font-size:13.5px;outline:none}
+.p-add input:focus{border-color:var(--rose)}
+.p-note{font-size:12px;color:var(--ink-soft);padding:2px 8px 6px}
+.p-list{max-height:min(60vh,520px);overflow:auto}
 .err{color:var(--danger);font-size:14px;min-height:1em}
 
 /* ---------- toast ---------- */
@@ -409,6 +431,7 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
   <header class="masthead">
     <h1>My <em>Wish</em> List</h1>
     <div class="sub">Những món quà trong List này có thể làm người ấy vui</div>
+    <button class="together" id="together" type="button"></button>
     <div class="stats">
       <div class="stat" id="statA">&nbsp;</div>
       <div class="next" id="nextOcc"></div>
@@ -429,6 +452,7 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
 
 <!-- music player -->
 <div class="player" id="player">
+  <div class="p-video" id="pVideo"><div id="pYT"></div></div>
   <div class="p-main">
     <div class="record" aria-hidden="true"></div>
     <div class="p-info">
@@ -446,7 +470,14 @@ footer .orn{display:block;font-size:20px;letter-spacing:.4em;margin-bottom:6px;b
     <input type="range" id="vol" min="0" max="100" value="60" aria-label="Âm lượng">
     <button class="p-list-btn" id="pListBtn" type="button">Danh sách</button>
   </div>
-  <div class="p-list" id="pList"></div>
+  <div class="p-list" id="pList">
+    <div id="pTracks"></div>
+    <form class="p-add" id="pAdd" autocomplete="off">
+      <input id="pAddUrl" placeholder="Dán link YouTube của bài hát" aria-label="Link YouTube">
+      <button class="btn small primary" type="submit">Thêm</button>
+    </form>
+    <div class="p-note" id="pNote">Bài YouTube lưu chung cho cả phòng.</div>
+  </div>
 </div>
 
 <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
@@ -537,6 +568,12 @@ const CATS = [
   ["tech", "Công nghệ"], ["home", "Nhà cửa"], ["food", "Ăn uống"],
   ["experience", "Trải nghiệm"], ["other", "Linh tinh"],
 ];
+function ytIdFromUrl(url) {
+  const u = String(url || "").trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(u)) return u;
+  const m = u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+  return m ? m[1] : null;
+}
 const LEVELS = { 1: "Thích", 2: "Rất thích", 3: "Mê lắm" };
 const catLabel = k => (CATS.find(c => c[0] === k) || CATS[CATS.length - 1])[1];
 const OCCASIONS = ["Sinh nhật", "Kỷ niệm", "Valentine", "8/3", "20/10", "Giáng sinh", "Tết", "Bất ngờ"];
@@ -545,6 +582,7 @@ const OCCASIONS = ["Sinh nhật", "Kỷ niệm", "Valentine", "8/3", "20/10", "G
 const state = {
   me: null,
   names: ["Anh", "Em"],
+  cfg: {},
   items: [],
   tab: null,          // 0, 1, or "picks"
   sort: "new",
@@ -562,7 +600,7 @@ const nameOf = i => (state.names[i] || (i ? "Em" : "Anh"));
 const LOCAL_ITEMS = "wl_local_items", LOCAL_CFG = "wl_local_cfg";
 function localLoad() {
   try { state.items = JSON.parse(ls.get(LOCAL_ITEMS) || "[]"); } catch { state.items = []; }
-  try { const c = JSON.parse(ls.get(LOCAL_CFG) || "null"); if (c && Array.isArray(c.names)) state.names = c.names; } catch {}
+  try { const c = JSON.parse(ls.get(LOCAL_CFG) || "null"); if (c) { state.cfg = c; if (Array.isArray(c.names)) state.names = c.names; } } catch {}
 }
 function localSave() { ls.set(LOCAL_ITEMS, JSON.stringify(state.items)); }
 
@@ -580,13 +618,14 @@ async function api(method, body) {
   if (r.status === 401) { const e = new Error("room"); e.code = "room"; throw e; }
   if (r.status === 503) { const e = new Error("no_db"); e.code = "no_db"; throw e; }
   if (r.status === 404) { const e = new Error("no_api"); e.code = "no_api"; throw e; }
-  if (!r.ok) { const e = new Error("http"); e.code = "http"; throw e; }
+  if (!r.ok) { let c = "http"; try { c = (await r.json()).error || c; } catch {} const e = new Error(c); e.code = c; throw e; }
   return r.json();
 }
 function applyState(st) {
   lastVer = st.ver;
   state.items = Array.isArray(st.items) ? st.items : [];
-  if (st.config && Array.isArray(st.config.names) && st.config.names.length === 2) state.names = st.config.names.map(String);
+  state.cfg = st.config && typeof st.config === "object" ? st.config : {};
+  if (Array.isArray(state.cfg.names) && state.cfg.names.length === 2) state.names = state.cfg.names.map(String);
   state.loaded = true;
   render();
 }
@@ -612,7 +651,8 @@ async function send(body, optimistic) {
   } catch (e) {
     busy--;
     state.items = JSON.parse(snapshot); render();
-    if (e.code === "room") needRoom(); else toast("Không lưu được, thử lại.");
+    if (e.code === "room") needRoom();
+    else toast(({ song_url: "Link YouTube chưa đúng.", song_unavailable: "Video này không phát được (riêng tư, đã xoá hoặc chặn nhúng).", songs_full: "Danh sách đã đủ 30 bài.", date: "Ngày chưa hợp lệ." })[e.code] || "Không lưu được, thử lại.");
     return false;
   }
 }
@@ -633,9 +673,22 @@ const Store = {
     if (state.mode === "remote") return send({ op: "del", id }, apply);
     apply(); localSave(); render(); return true;
   },
+  async cfgOp(body, localPatch) {
+    if (state.mode === "remote") return send(body, null);
+    state.cfg = Object.assign({}, state.cfg, localPatch(state.cfg));
+    ls.set(LOCAL_CFG, JSON.stringify(state.cfg)); render(); return true;
+  },
+  setDate(d) { return Store.cfgOp({ op: "date", date: d }, () => ({ startDate: d })); },
+  addSong(url) {
+    return Store.cfgOp({ op: "song_add", url }, c => {
+      const id = ytIdFromUrl(url); const songs = Array.isArray(c.songs) ? c.songs : [];
+      return { songs: id && !songs.some(x => x.id === id) ? [...songs, { id, title: "Bài YouTube" }] : songs };
+    });
+  },
+  delSong(id) { return Store.cfgOp({ op: "song_del", id }, c => ({ songs: (c.songs || []).filter(x => x.id !== id) })); },
   async saveNames(names) {
     if (state.mode === "remote") return send({ op: "names", names }, () => { state.names = names; });
-    state.names = names; ls.set(LOCAL_CFG, JSON.stringify({ names })); render(); return true;
+    state.names = names; state.cfg = Object.assign({}, state.cfg, { names }); ls.set(LOCAL_CFG, JSON.stringify(state.cfg)); render(); return true;
   },
 };
 
@@ -654,8 +707,7 @@ function enterRoom(code, st, created) {
   loadMe(); applyState(st); startPolling(); banner(null);
   closeModal();
   if (created) roomCreatedModal(code);
-  else if (state.me == null) whoModal(true);
-  else maybeTour();
+  else nextOnboarding();
 }
 const ROOM_WORDS = ["hoa-hong", "may-hong", "sao-bang", "trang-non", "nang-mai", "gio-thu", "bien-xanh", "mua-ha", "keo-ngot", "la-thu"];
 function randomRoom() {
@@ -674,7 +726,7 @@ function roomCreatedModal(code) {
       h("div", { class: "code-box" }, code),
       h("div", { class: "modal-actions" },
         h("button", { class: "btn", type: "button", onclick: () => copyText(code) }, "Sao chép mã"),
-        h("button", { class: "btn primary", type: "button", onclick: () => { closeModal(); if (state.me == null) whoModal(true); else maybeTour(); } }, "Tiếp tục")));
+        h("button", { class: "btn primary", type: "button", onclick: () => { closeModal(); nextOnboarding(); } }, "Tiếp tục")));
   });
 }
 function roomModal() {
@@ -747,10 +799,62 @@ function roomModal() {
   });
 }
 
+/* ---------- onboarding: name -> love date -> tour ---------- */
+const askDateKey = () => "wl_askdate:" + room;
+function nextOnboarding() {
+  if (state.me == null) { whoModal(true); return; }
+  if (!state.cfg.startDate && !ls.get(askDateKey())) { setTimeout(() => dateModal(true), 250); return; }
+  maybeTour();
+}
+function dateModal(onboarding) {
+  openModal(m => {
+    const today = new Date(); const iso = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
+    const inp = h("input", { type: "date", value: state.cfg.startDate || "", max: iso });
+    const err = h("div", { class: "err" });
+    const done = () => { ls.set(askDateKey(), "1"); if (onboarding) maybeTour(); };
+    afterClose = done;
+    const save = saver("Lưu", async () => {
+      const d = inp.value;
+      if (!d) { err.textContent = "Chọn ngày."; return false; }
+      if (d > iso) { err.textContent = "Ngày không thể ở tương lai."; return false; }
+      const ok = await Store.setDate(d);
+      if (ok) { closeModal(); toast("Đã lưu ngày"); }
+      return ok;
+    });
+    m.append(xBtn(),
+      h("h2", null, "Ngày yêu nhau"),
+      h("p", { class: "lede" }, "Trang sẽ tự đếm số ngày hai bạn bên nhau."),
+      h("div", { class: "field" }, inp), err,
+      h("div", { class: "modal-actions" },
+        state.cfg.startDate ? h("button", { class: "btn danger", type: "button", onclick: async () => { if (await Store.setDate(null)) closeModal(); } }, "Xoá ngày") : null,
+        h("button", { class: "btn", type: "button", onclick: closeModal }, onboarding ? "Để sau" : "Huỷ"),
+        save.btn));
+  });
+}
+function togetherInfo(start) {
+  const d0 = parseDate(start); if (!d0) return null;
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  const days = Math.round((t - d0) / 86400000);
+  if (days < 0) return null;
+  let note;
+  const years = t.getFullYear() - d0.getFullYear();
+  const annThisYear = new Date(t.getFullYear(), d0.getMonth(), d0.getDate());
+  if (days > 0 && annThisYear.getTime() === t.getTime()) note = "Hôm nay kỷ niệm " + years + " năm";
+  else if (days > 0 && days % 100 === 0) note = "Hôm nay tròn " + days + " ngày";
+  else {
+    const toHundred = 100 - (days % 100), hundred = days + toHundred;
+    let ann = annThisYear; if (ann <= t) ann = new Date(t.getFullYear() + 1, d0.getMonth(), d0.getDate());
+    const toAnn = Math.round((ann - t) / 86400000), annYears = ann.getFullYear() - d0.getFullYear();
+    note = toAnn <= toHundred ? "còn " + toAnn + " ngày tới kỷ niệm " + annYears + " năm" : "còn " + toHundred + " ngày tới mốc " + hundred + " ngày";
+  }
+  return { days, note };
+}
+
 /* ---------- guided tour ---------- */
 const tabEl = key => document.querySelector('.tab[data-tab="' + key + '"]');
 const TOUR = [
   { sel: null, t: "Hướng dẫn nhanh", d: "Mỗi người có một danh sách riêng. Người kia chọn quà từ danh sách của bạn, và ngược lại." },
+  { sel: () => $("#together"), t: "Ngày bên nhau", d: "Tự đếm số ngày hai bạn yêu nhau. Bấm vào để đặt hoặc sửa ngày." },
   { sel: () => tabEl(state.me), t: "Danh sách của bạn", d: "Những món bạn muốn được tặng.", before: () => { state.tab = state.me; state.filter = "all"; render(); } },
   { sel: () => $("#addBtn"), t: "Thêm món", d: "Ghi tên, giá, link. Chưa biết thêm gì thì bấm Gợi ý ngay bên cạnh." },
   { sel: () => tabEl(partner()), t: "Danh sách người kia", d: "Bấm Chọn tặng ở một món rồi chọn dịp." },
@@ -758,7 +862,7 @@ const TOUR = [
   { sel: () => $("#settingsBtn"), t: "Đổi tên", d: "Đổi tên hai người, xem và sao chép mã phòng." },
   { sel: () => $("#themeBtn"), t: "Sáng / Tối", d: "Đổi giao diện." },
   { sel: () => $("#helpBtn"), t: "Xem lại hướng dẫn", d: "Bấm vào đây bất cứ lúc nào." },
-  { sel: () => $("#player"), t: "Nhạc nền", d: "Bật, tắt và chuyển bài." },
+  { sel: () => $("#player"), t: "Nhạc nền", d: "Bật, tắt, chuyển bài. Bấm Danh sách để thêm bài hát bằng link YouTube." },
 ];
 let tourIdx = 0;
 function maybeTour() { if (!ls.get("wl_tour") && state.me != null) setTimeout(startTour, 350); }
@@ -868,7 +972,7 @@ function whoModal(force) {
       h("p", { class: "lede" }, "Chọn tên của bạn"),
       h("div", { class: "who-grid" }, [0, 1].map(i =>
         h("button", { type: "button", class: state.me === i ? "on" : "", onclick: () => {
-          state.me = i; ls.set(meKey(), String(i)); state.tab = i; closeModal(); render(); maybeTour();
+          state.me = i; ls.set(meKey(), String(i)); state.tab = i; closeModal(); render(); nextOnboarding();
         } }, nameOf(i)))),
       h("div", { class: "modal-actions" },
         h("button", { class: "btn small", type: "button", onclick: () => settingsModal(force) }, "Đổi tên"))
@@ -1236,6 +1340,14 @@ function render() {
   const [A, B] = [nameOf(0), nameOf(1)];
   
   $("#footNames").textContent = A + " & " + B;
+  const tg = $("#together");
+  const info = state.cfg.startDate ? togetherInfo(state.cfg.startDate) : null;
+  tg.replaceChildren(...(info
+    ? [h("span", { class: "tg-main" }, "Bên nhau " + fmtNum(info.days) + " ngày"), h("span", { class: "tg-sub" }, "Từ " + fmtDate(state.cfg.startDate) + " · " + info.note)]
+    : [h("span", { class: "tg-main" }, "Thêm ngày yêu nhau")]));
+  tg.classList.toggle("empty", !info);
+  tg.style.display = state.mode === "loading" && !state.loaded ? "none" : "";
+  if (window.PlayerUI) window.PlayerUI();
   $("#whoName").textContent = state.me == null ? "chưa chọn" : nameOf(state.me);
   document.title = "My Wish List · " + A + " & " + B;
 
@@ -1424,7 +1536,7 @@ const Music = (() => {
         if (loopN >= tr.loops) {
           waiting = true;
           const ms = (loopStart - ctx.currentTime) * 1000 + 2200;
-          advanceT = setTimeout(() => { waiting = false; go(cur + 1); }, ms);
+          advanceT = setTimeout(() => { waiting = false; if (api.onEnd) api.onEnd(); }, ms);
           break;
         }
       }
@@ -1436,10 +1548,8 @@ const Music = (() => {
   }
   function go(i) {
     cur = ((i % TRACKS.length) + TRACKS.length) % TRACKS.length;
-    try { localStorage.setItem("wl_track", String(cur)); } catch {}
     clearTimeout(advanceT); waiting = false;
     if (playing) { newBus(); idx = 0; loopN = 0; loopStart = ctx.currentTime + .35; }
-    ui();
   }
   async function play() {
     if (!ctx && !init()) { toast("Trình duyệt này chưa phát được nhạc."); return; }
@@ -1450,7 +1560,6 @@ const Music = (() => {
     master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
     master.gain.linearRampToValueAtTime(vol, ctx.currentTime + 1.5);
     clearInterval(timer); timer = setInterval(schedule, 120); schedule();
-    ui();
   }
   function stop() {
     if (!playing) return;
@@ -1458,40 +1567,129 @@ const Music = (() => {
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
     master.gain.linearRampToValueAtTime(0, ctx.currentTime + .8);
-    ui();
   }
   function setVol(v) { vol = v; if (playing && ctx) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(v, ctx.currentTime, .08); } }
-  function ui() {
-    const tr = TRACKS[cur];
-    $("#player").classList.toggle("on", playing);
-    $("#pTitle").textContent = tr.title;
-    $("#pSub").textContent = playing ? "Đang phát" : "Nhạc nền";
-    $("#pPlayIc").innerHTML = playing ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4v16l13-8z"/>';
-    $("#pList").replaceChildren(...TRACKS.map((t, i) => h("button", { class: "p-track" + (i === cur ? " cur" : ""), type: "button",
-      onclick: () => { go(i); if (!playing) { play(); try { localStorage.setItem("wl_music", "on"); } catch {} } } },
-      h("span", { class: "n" }, i + 1), h("span", null, h("span", { class: "tt" }, t.title), h("span", { class: "ss" }, t.sub)),
-      h("span", { class: "eq" }, h("i"), h("i"), h("i")))));
-  }
-  try { const s = Number(localStorage.getItem("wl_track")); if (s >= 0 && s < TRACKS.length) cur = s; } catch {}
-  return { play, stop, setVol, go, ui, get playing() { return playing; }, get cur() { return cur; } };
+  const api = { play, stop, setVol, go, onEnd: null, get playing() { return playing; }, get cur() { return cur; } };
+  return api;
 })();
 
-Music.ui();
+/* ---------- playlist: piano pieces + the room's YouTube songs ---------- */
+const Player = (() => {
+  let cur = ls.get("wl_track2") || "p0";
+  let playing = false, yt = null, ytApi = null, ytPending = null, vol = .6;
+  const songs = () => (Array.isArray(state.cfg.songs) ? state.cfg.songs : []);
+  const list = () => [
+    ...TRACKS.map((t, i) => ({ key: "p" + i, type: "piano", i, title: t.title, sub: t.sub })),
+    ...songs().map(x => ({ key: "yt:" + x.id, type: "yt", id: x.id, title: x.title || "Bài YouTube", sub: "YouTube" })),
+  ];
+  const track = () => list().find(t => t.key === cur) || list()[0];
+
+  function loadYT() {
+    if (ytApi) return ytApi;
+    ytApi = new Promise(res => {
+      if (window.YT && window.YT.Player) return res(true);
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(true); };
+      const sc = document.createElement("script");
+      sc.src = "https://www.youtube.com/iframe_api"; sc.async = true;
+      sc.onerror = () => res(false);
+      document.head.append(sc);
+      setTimeout(() => res(!!(window.YT && window.YT.Player)), 10000);
+    });
+    return ytApi;
+  }
+  async function ytPlay(id) {
+    $("#pVideo").classList.add("show");
+    if (!(await loadYT())) { toast("Không tải được YouTube."); return; }
+    if (track().type !== "yt" || track().id !== id || !playing) return;   // user moved on while loading
+    if (!yt) {
+      yt = new YT.Player("pYT", {
+        width: "100%", height: "200", videoId: id,
+        playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onReady: e => { e.target.setVolume(Math.round(vol * 100)); if (playing && track().type === "yt") e.target.playVideo(); else e.target.pauseVideo(); },
+          onStateChange: e => {
+            if (track().type !== "yt") return;
+            if (e.data === YT.PlayerState.ENDED) next();
+            else if (e.data === YT.PlayerState.PLAYING && !playing) { playing = true; ui(); }
+            else if (e.data === YT.PlayerState.PAUSED && playing) { playing = false; ls.set("wl_music", "off"); ui(); }
+          },
+          onError: () => { toast("Không phát được bài này."); setTimeout(next, 800); },
+        },
+      });
+    } else { yt.setVolume(Math.round(vol * 100)); yt.loadVideoById(id); }
+  }
+  function ytStop(hide) {
+    try { if (yt) yt.pauseVideo(); } catch {}
+    if (hide) $("#pVideo").classList.remove("show");
+  }
+  function play() {
+    const t = track(); cur = t.key; playing = true;
+    if (t.type === "piano") { ytStop(true); Music.go(t.i); Music.play(); }
+    else { Music.stop(); ytPlay(t.id); }
+    ui();
+  }
+  function stop() { playing = false; Music.stop(); ytStop(false); ui(); }
+  function select(key) {
+    cur = key; ls.set("wl_track2", key);
+    if (playing) play(); else { if (track().type === "piano") ytStop(true); ui(); }
+  }
+  function step(d) {
+    const L = list(); const i = L.findIndex(t => t.key === track().key);
+    select(L[(i + d + L.length) % L.length].key);
+    if (!playing) { playing = true; play(); ls.set("wl_music", "on"); }
+  }
+  const next = () => step(1);
+  Music.onEnd = next;
+  function setVol(v) { vol = v; Music.setVol(v * v); try { if (yt) yt.setVolume(Math.round(v * 100)); } catch {} }
+  function ui() {
+    const t = track();
+    $("#player").classList.toggle("on", playing);
+    $("#pTitle").textContent = t.title;
+    $("#pSub").textContent = playing ? "Đang phát" : (t.type === "yt" ? "YouTube" : "Nhạc nền");
+    $("#pPlayIc").innerHTML = playing ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4v16l13-8z"/>';
+    $("#pTracks").replaceChildren(...list().map((x, i) => h("div", { class: "p-track" + (x.key === t.key ? " cur" : "") },
+      h("button", { class: "p-track-main", type: "button", onclick: () => { select(x.key); if (!playing) { play(); ls.set("wl_music", "on"); } } },
+        h("span", { class: "n" }, i + 1), h("span", { class: "p-tx" }, h("span", { class: "tt" }, x.title), h("span", { class: "ss" }, x.sub)),
+        h("span", { class: "eq" }, h("i"), h("i"), h("i"))),
+      x.type === "yt" && state.mode === "remote" || x.type === "yt" && state.mode === "local"
+        ? h("button", { class: "p-del", type: "button", "aria-label": "Xoá " + x.title, onclick: async () => {
+            if (x.key === t.key) { stop(); cur = "p0"; }
+            await Store.delSong(x.id);
+          } }, "Xoá") : null)));
+    $("#pAdd").style.display = state.me == null ? "none" : "";
+  }
+  window.PlayerUI = ui;
+  return { play, stop, select, step, setVol, ui, get playing() { return playing; } };
+})();
+
+Player.ui();
 $("#pPlay").addEventListener("click", e => {
   e.stopPropagation();
-  if (Music.playing) { Music.stop(); ls.set("wl_music", "off"); } else { Music.play(); ls.set("wl_music", "on"); }
+  if (Player.playing) { Player.stop(); ls.set("wl_music", "off"); } else { Player.play(); ls.set("wl_music", "on"); }
 });
-$("#pNext").addEventListener("click", e => { e.stopPropagation(); Music.go(Music.cur + 1); if (!Music.playing) { Music.play(); ls.set("wl_music", "on"); } });
-$("#pPrev").addEventListener("click", e => { e.stopPropagation(); Music.go(Music.cur - 1); if (!Music.playing) { Music.play(); ls.set("wl_music", "on"); } });
+$("#pNext").addEventListener("click", e => { e.stopPropagation(); Player.step(1); });
+$("#pPrev").addEventListener("click", e => { e.stopPropagation(); Player.step(-1); });
 $("#pListBtn").addEventListener("click", () => $("#player").classList.toggle("open"));
-$("#vol").addEventListener("input", e => { const v = Number(e.target.value) / 100; Music.setVol(v * v); ls.set("wl_vol", e.target.value); });
-(() => { const v = ls.get("wl_vol"); if (v != null) $("#vol").value = v; const x = Number($("#vol").value) / 100; Music.setVol(x * x); })();
+$("#vol").addEventListener("input", e => { Player.setVol(Number(e.target.value) / 100); ls.set("wl_vol", e.target.value); });
+(() => { const v = ls.get("wl_vol"); if (v != null) $("#vol").value = v; Player.setVol(Number($("#vol").value) / 100); })();
+$("#pAdd").addEventListener("submit", async e => {
+  e.preventDefault();
+  const inp = $("#pAddUrl"), btn = $("#pAdd button");
+  const url = inp.value.trim();
+  if (!ytIdFromUrl(url)) { toast("Link YouTube chưa đúng."); return; }
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = "Đang thêm…";
+  const ok = await Store.addSong(url);
+  btn.disabled = false; btn.textContent = "Thêm";
+  if (ok) { inp.value = ""; toast("Đã thêm bài"); }
+});
 // background music starts on the first interaction (browsers block autoplay), unless turned off before
 const firstTouch = e => {
   document.removeEventListener("pointerdown", firstTouch, true);
   document.removeEventListener("keydown", firstTouch, true);
   if (e && e.target && e.target.closest && e.target.closest("#player")) return;
-  if (ls.get("wl_music") !== "off" && !Music.playing) Music.play();
+  if (ls.get("wl_music") !== "off" && !Player.playing) Player.play();
 };
 document.addEventListener("pointerdown", firstTouch, true);
 document.addEventListener("keydown", firstTouch, true);
@@ -1501,6 +1699,7 @@ $("#today").textContent = new Date().toLocaleDateString("vi-VN", { day: "numeric
 $("#whoBtn").addEventListener("click", () => whoModal(false));
 $("#settingsBtn").addEventListener("click", () => settingsModal(false));
 $("#helpBtn").addEventListener("click", startTour);
+$("#together").addEventListener("click", () => dateModal(false));
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
   $("#themeLbl").textContent = t === "dark" ? "Sáng" : "Tối";
